@@ -1,5 +1,6 @@
 var mongoose = require("mongoose"),
-	config = require("../../config.json");
+	config = require("../../config.json"),
+	path = require("path");
 
 var Schema = mongoose.Schema;
 
@@ -7,20 +8,22 @@ function Mongo(){
 	if (!(this instanceof Mongo)){
 		return new Mongo();
 	}
-	var uri = getUri();
+	var uri = this.getUri();
 	if (uri){
 		//Just in case i need the Connection
 		// I might not but... I always know I can count on it
 		// being here
 		this.Connection = mongoose.connect(uri);
 	}else{
-		console.log("Error: URI isn't correct...\nPlease modify the config.json file."):
+		console.log("Error: URI isn't correct...\nPlease modify the config.json file.");
 		process.exit();
 	}
 
 	//We have connected to out Database..
 	// register models etc
+	this.loadSchemas(path.join(__dirname, "../../schemas/"));
 
+	/*
 	this.UserModel = mongoose.model("User", new Schema({
 		id : {type: String, unique: true }, //UUID4 format, allows for multiple people to have same username
 		username : {type: String, unique: false}, //Turn to true if we don't want multiple people with same username...
@@ -44,12 +47,32 @@ function Mongo(){
 				and I can't be sure it's not going to be leaked..
 				So, I'm just forcing them to use an APP instead as I don't have
 				to store anything sensitive in the DB
-			*/
+
 		}
-	}));
+	}));*/
 };
 
-Mongo.getUri = function(){
+Mongo.prototype.loadSchemas = function(schemaDir){
+	var fs = require("fs");
+	fs.readdirSync(schemaDir).forEach(function(filename){
+		var filepath = schemaDir + filename;
+
+		if (fs.statSync(filepath).isDirectory()){
+			//Recursivly load all schemas
+			loadSchemas(filepath + "/");
+		}else{
+			// If it's a json file
+			if (filename.split(".").pop() == "js"){
+				var modelName = filename.split(".")[filename.split(".").length - 2];
+				console.log(modelName + " = " + filepath);
+				this[modelName + "Model"] = mongoose.model(modelName, require(filepath));
+			}
+		}
+
+	});
+};
+
+Mongo.prototype.getUri = function(){
 	var uri = "mongodb://";
 	// If we have a username and password set in the config.json file, use them!
 	if (config.mongo.username && config.mongo.password)
@@ -72,7 +95,7 @@ Mongo.getUri = function(){
 		console.log("No database found... Defaulting to 'ScrimSpace'");
 
 	//     Add host                   add port OR default               add database OR default
-	uri += config.mongo.host + ":" + (config.mongo.port || 27017) + "/" (config.mongo.database || "FMITAD");
+	uri += config.mongo.host + ":" + (config.mongo.port || 27017) + "/" + (config.mongo.database || "FMITAD");
 
 	//Return the URI
 	return uri;
