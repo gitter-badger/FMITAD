@@ -4,10 +4,14 @@ var mongoose = require("mongoose"),
 
 var Schema = mongoose.Schema;
 
+// An array to hold our Models
+var Models = [];
+
 function Mongo(){
 	if (!(this instanceof Mongo)){
 		return new Mongo();
 	}
+
 	var uri = this.getUri();
 	if (uri){
 		//Just in case i need the Connection
@@ -22,34 +26,7 @@ function Mongo(){
 	//We have connected to out Database..
 	// register models etc
 	this.loadSchemas(path.join(__dirname, "../../schemas/"));
-
-	/*
-	this.UserModel = mongoose.model("User", new Schema({
-		id : {type: String, unique: true }, //UUID4 format, allows for multiple people to have same username
-		username : {type: String, unique: false}, //Turn to true if we don't want multiple people with same username...
-		email : {type: String, unique: true},
-		salt: String, // Salt for hashing password with
-		password: String, // Hashed ( password + salt )
-
-		profile: {
-			//Maybe implement this at somepoint?
-			// I think it would be nice to have
-
-			status: String // Offline, Online, Invisible (Show offline to everyone except friends);
-		},
-
-		two_factor: {
-			enabled: {type: Boolean, default: false}  // Wether they have 2FA enabled or not
-			//type: String // App, Sms??
-			/*
-				Since I'm not a security expert, I've decided not to allow Sms
-				2FA because it would mean storing user's phone number
-				and I can't be sure it's not going to be leaked..
-				So, I'm just forcing them to use an APP instead as I don't have
-				to store anything sensitive in the DB
-
-		}
-	}));*/
+	console.log("Schemas loaded.");
 };
 
 Mongo.prototype.loadSchemas = function(schemaDir){
@@ -61,15 +38,25 @@ Mongo.prototype.loadSchemas = function(schemaDir){
 			//Recursivly load all schemas
 			loadSchemas(filepath + "/");
 		}else{
-			// If it's a json file
+			// If it's a js file
 			if (filename.split(".").pop() == "js"){
 				var modelName = filename.split(".")[filename.split(".").length - 2];
-				console.log(modelName + " = " + filepath);
-				this[modelName + "Model"] = mongoose.model(modelName, require(filepath));
+				//console.log(modelName + " = " + filepath);
+				var s = new Schema(require(filepath));
+
+				Models[modelName] = mongoose.model(modelName,  s);
 			}
 		}
 
 	});
+};
+
+Mongo.prototype.getModel = function(modelName){
+	if (modelName in Models)
+			return Models[modelName];
+	
+	console.log("Throwing error : getModel(" + modelName + ")");
+	throw new Error("No model with the name '" +modelName+ "' exists");
 };
 
 Mongo.prototype.getUri = function(){
