@@ -1,0 +1,150 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <% title="Sign Up" %>
+        <% include ../partials/head %>
+
+        <link href="//cdnjs.cloudflare.com/ajax/libs/jquery-form-validator/2.2.8/theme-default.min.css" rel="stylesheet" type="text/css" />
+        <script src='https://www.google.com/recaptcha/api.js'></script>
+    </head>
+    <body>
+        <% include ../partials/header %>
+
+        <!-- Page Content -->
+        <div class="container">
+            <% if (typeof error != 'undefined'){ %>
+                <p class="alert alert-warning"><%= error %></p>
+            <% } %>
+            <% if (typeof notice != 'undefined'){ %>
+                <p class="alert alert-info"><%= notice %></p>
+            <% } %>
+            <% if (typeof success != 'undefined'){ %>
+                <p class="alert alert-success"><%= success %></p>
+            <% } %>
+
+            <div class="row">
+                <div class="col-xs-12 col-sm-8 col-md-6 col-sm-offset-2 col-md-offset-3">
+                    <form id="register_form" role="form" method="post" action="/local-reg">
+                        <h2>Please Sign Up <small>It's free and always will be.</small></h2>
+                        <hr class="colorgraph">
+                        <div class="row">
+                            <div class="col-xs-6 col-sm-6 col-md-6">
+                                <div class="form-group">
+                                    <input data-validation="length" data-validation-length="min4" data-validation-error-msg="Your first name must be more than 4 characters" type="text" name="first_name" id="first_name" class="form-control input-lg" placeholder="First Name" tabindex="1" required>
+                                </div>
+                            </div>
+                            <div class="col-xs-6 col-sm-6 col-md-6">
+                                <div class="form-group">
+
+                                    <input data-validation="length" data-validation-length="min4" data-validation-error-msg="Your last name must be more than 4 characters" type="text" name="last_name" id="last_name" class="form-control input-lg" placeholder="Last Name" tabindex="2">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <input data-validation="length" data-validation-length="min5" data-validation-error-msg="Your display name must be more than 5 characters" type="text" name="display_name" id="display_name" class="form-control input-lg" placeholder="Display Name" tabindex="3" required>
+                        </div>
+                        <div class="form-group">
+                            <input data-validation="email" type="email" data-validation-error-msg="Please enter a valid email" name="email" id="email" class="form-control input-lg" placeholder="Email Address" tabindex="4" required>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-6 col-sm-6 col-md-6">
+                                <div class="form-group">
+                                    <input data-validation="strength" data-validation-strength="0" type="password" name="password_confirmation" id="password" class="form-control input-lg" placeholder="Password" tabindex="5" required>
+                                </div>
+                            </div>
+                            <div class="col-xs-6 col-sm-6 col-md-6">
+                                <div class="form-group">
+                                    <input data-validation="confirmation" type="password" name="password" data-validation-error-msg="Please make sure the passwords match" id="password_confirmation" class="form-control input-lg" placeholder="Confirm Password" tabindex="6">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-3 col-sm-3 col-md-3">
+                                <span class="button-checkbox">
+                                    <a href="#" data-toggle="modal" data-target="#t_and_c_m" id="t_and_c_accept" type="button" class="btn btn-danger" tabindex="7">Agree</a>
+                                    <input data-validation="isChecked" data-validation-isChecked="#t_and_c" class="hidden" type="checkbox" name="t_and_c" id="t_and_c" value="1">
+                                </span>
+                            </div>
+                            <div class="col-xs-9 col-sm-9 col-md-9">
+                                By clicking <strong class="label label-primary">Register</strong>, you agree to the <a href="#" data-toggle="modal" data-target="#t_and_c_m">Terms and Conditions</a> set out by this site, including our Cookie Use.
+                            </div>
+
+                            <div class="g-recaptcha col-xs-3" data-sitekey="6Lc07RQTAAAAADtxn_P85UScG5aG0Xac0A0q9nlB"></div>
+                        </div>
+                        <hr class="colorgraph">
+                        <div class="row">
+                            <div class="col-xs-6 col-md-6"><input type="submit" value="Register" class="btn btn-primary btn-block btn-lg" tabindex="7"></div>
+                            <div class="col-xs-6 col-md-6"><a data-toggle="modal" data-target="#login_m" href="#" class="btn btn-success btn-block btn-lg">Sign In</a></div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!-- Modal -->
+            <div class="modal fade" id="t_and_c_m" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                            <h4 class="modal-title" id="myModalLabel">Terms & Conditions</h4>
+                        </div>
+                        <div class="modal-body">
+                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Similique, itaque, modi, aliquam nostrum at sapiente consequuntur natus odio reiciendis perferendis rem nisi tempore possimus ipsa porro delectus quidem dolorem ad.</p>
+                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Similique, itaque, modi, aliquam nostrum at sapiente consequuntur natus odio reiciendis perferendis rem nisi tempore possimus ipsa porro delectus quidem dolorem ad.</p>
+                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Similique, itaque, modi, aliquam nostrum at sapiente consequuntur natus odio reiciendis perferendis rem nisi tempore possimus ipsa porro delectus quidem dolorem ad.</p>
+                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Similique, itaque, modi, aliquam nostrum at sapiente consequuntur natus odio reiciendis perferendis rem nisi tempore possimus ipsa porro delectus quidem dolorem ad.</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button id="accept_t_and_c" type="button" class="btn btn-primary" data-dismiss="modal">I Agree</button>
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+            </div><!-- /.modal -->
+        </div>
+        <!-- /.container -->
+
+        <% include ../partials/footer %>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-form-validator/2.2.8/jquery.form-validator.min.js"></script>
+
+        <script>
+            $.formUtils.addValidator({
+                name: "isChecked",
+                validatorFunction: function (value, $ele, config, language, $form) {
+                    var toValidate = $ele.attr("data-validation-isChecked");
+                    console.log($(toValidate).prop("checked"));
+                    return $(toValidate).prop("checked");
+                },
+                errorMessage: "Please accept the Terms and Conditions",
+                errorMessageKey: "notChecked"
+            });
+
+            $.validate({
+                modules: 'security',
+
+                validateOnBlur : false, // disable validation when input looses focus
+                errorMessagePosition : 'top', // Instead of 'element' which is default
+                validateHiddenInputs: true,
+
+                onModulesLoaded: function () {
+                    var optionalConfig = {
+                        fontSize: '12pt',
+                        padding: '4px',
+                        bad: 'Very weak',
+                        weak: 'Fairly weak',
+                        good: 'Good',
+                        strong: 'Strong'
+                    };
+
+                    $('input[name="password_confirmation"]').displayPasswordStrength(optionalConfig);
+                }
+            });
+
+            $("#accept_t_and_c").click(function (e) {
+                agreeToTc();
+            });
+            function agreeToTc() {
+                document.getElementById("t_and_c").checked = true;
+                document.getElementById("t_and_c_accept").className = "btn btn-success";
+            }
+        </script>
+    </body>
+</html>

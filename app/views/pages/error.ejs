@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <% include ../partials/head %>
+    </head>
+
+    <body>
+
+        <% include ../partials/header %>
+
+        <!-- Page Content -->
+        <div class="container">
+			<h1><%= message %></h1>
+			<% if (error) { %>
+				<h2><%= error.status + ' - ' + error.message %></h2>
+				<pre><%= error.stack %></pre>
+			<% } %>
+        </div>
+        <!-- /.container -->
+
+        <% include ../partials/footer %>
+        <!-- /.container -->
+
+    </body>
+</html>

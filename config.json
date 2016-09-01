@@ -1,0 +1,14 @@
+{
+	"listen_port" : 80,
+
+	"mongo": {
+		"host": "localhost",
+		"port": 27017,
+
+		"username" : "Admin",
+		"password" : "password",
+
+		"database" : "FMITAD"
+	}
+
+}

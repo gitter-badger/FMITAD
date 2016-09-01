@@ -1,0 +1,71 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <% title="Home" %>
+        <% include ../partials/head %>
+        <link href="./css/main.css" rel="stylesheet" />
+    </head>
+
+    <body>
+
+        <% include ../partials/header %>
+        <% if (typeof error != 'undefined'){ %>
+            <p class="alert alert-warning"><%= error %></p>
+        <% } %>
+        <% if (typeof notice != 'undefined'){ %>
+            <p class="alert alert-info"><%= notice %></p>
+        <% } %>
+        <% if (typeof success != 'undefined'){ %>
+            <p class="alert alert-success"><%= success %></p>
+        <% } %>
+
+        <header id="carosel" class="carousel slide">
+
+            <ol class="carousel-indicators">
+                <li data-target="#carosel" data-slide-to="0" class="active"></li>
+                <li data-target="#carosel" data-slide-to="1"></li>
+                <li data-target="#carosel" data-slide-to="2"></li>
+            </ol>
+            <div class="carousel-inner">
+                <div class="item active">
+                    <div class="fill holderjs" data-background-src="?holder.js/1350x450?text=Slide one&auto=yes&theme=lava"></div>
+                    <!--<div class="carousel-caption">
+                        <h2>Caption 1</h2>
+                    </div>-->
+                </div>
+                <div class="item">
+                    <div class="fill holderjs" data-background-src="?holder.js/1350x450?text=Slide one&auto=yes&theme=lava"></div>
+                    <!--<div class="carousel-caption">
+                        <h2>Caption 2</h2>
+                    </div>-->
+                </div>
+                <div class="item">
+                    <div class="fill holderjs" data-background-src="?holder.js/1350x450?text=Slide one&auto=yes&theme=lava"></div>
+                </div>
+            </div>
+
+            <form class="signup">
+                <div>Sign up and start using FMITAD!</div>
+                <div class="signup-box">
+                    <h2><a href="/signin">Sign Up by clicking here.</a></h2>
+                </div>
+            </form>
+        </header>
+
+        <!-- Page Content -->
+        <div class="container">
+
+        </div>
+        <!-- /.container -->
+        <% include ../partials/footer %>
+        <!-- /.container -->
+        <script src="./js/holder.js"></script>
+
+        <script>
+            $(".carousel").carousel({
+                interval: 5000
+            });
+        </script>
+    </body>
+
+</html>
