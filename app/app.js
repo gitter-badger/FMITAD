@@ -6,6 +6,8 @@ var express = require("express"), // website framework
     bodyParser = require("body-parser"), // parses POST and GET data into JSON format... I think
 	config = require("../config.json"); // our config file, 1 dir up
 
+require("./lib/mongo"); // Connect to the DB
+
 var app = express();
 var server = require('http').Server(app);
 
@@ -17,6 +19,7 @@ helper(app);
 
 // setting up express
 app.use(express.static(path.join(__dirname, "public"))); // make sure it mounts the folders in /public
+
 app.use(cookieParser()); // use the cookie middleware
 app.use(bodyParser.json()); // allow us to recievv JSON data
 app.use(bodyParser.urlencoded( {extended: true} )); // I can't remember what this does.
@@ -42,7 +45,6 @@ server.listen(app.get("port"), function(){
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
-	console.log("Sending an error...");
     var err = new Error('Not Found');
     err.status = 404;
     next(err);
@@ -53,6 +55,7 @@ app.use(function (req, res, next) {
 // will print stacktrace
 if (app.get('env') === 'development') {
     app.use(function (err, req, res, next) {
+		console.log("Sending an error...");
         res.status(err.status || 500);
         res.render('pages/error', {
             message: err.message,
@@ -64,6 +67,7 @@ if (app.get('env') === 'development') {
 // production error handler
 // no stacktraces leaked to user
 app.use(function (err, req, res, next) {
+	console.log("Sending an error...");
     res.status(err.status || 500);
     res.render('pages/error', {
         message: err.message,
