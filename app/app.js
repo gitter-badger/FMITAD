@@ -12,53 +12,8 @@ var mongoUtil = require("./lib/mongo"); // Connect to the DB
 var app = express();
 var server = require('http').Server(app);
 
-var passport = require("passport"),
-	steamStrategy = require("./strategy/steamStrategy"),
-	twitchStrategy = require("./strategy/twitchStrategy");
-
-//Define passport usage
-passport.use(new steamStrategy({
-	returnURL: config.steam.redirect_uri,
-	realm: "http://localhost/",
-	apiKey: config.steam.api_key,
-	passReqToCallback: true
-	},
-	function(req, identifier, profile, done){
-
-		mongoUtil.getModel("User").findOne({id: req.user.id}, function(err, user){
-			return done(null, user);
-		});
-
-	}
-));
-passport.use(new twitchStrategy({
-		clientID: config.twitch.client_id,
-		clientSecret: config.twitch.client_secret,
-		callbackURL: config.twitch.redirect_uri,
-		scope: config.twitch.scope.join(" "),
-		passReqToCallback: true
-	}, function(req, accesstoken, refreshtoken, profile, done){
-
-		mongoUtil.getModel("User").findOne({id: req.user.id}, function(err, user){
-			return done(null, user);
-		});
-
-	}
-));
-
-passport.serializeUser(function(user, done){
-	console.log("Serialize: " + JSON.stringify(user));
-	done(null, user.id);
-});
-
-passport.deserializeUser(function(obj, done){
-	console.log("Deserialize: " + JSON.stringify(obj));
-
-	mongoUtil.getModel("User").findOne({id: obj}, function(err, user){
-		done (err, user);
-	});
-
-});
+var passport = require("passport");
+require("./lib/passportHelper")(passport);
 
 app.set("port", process.env.PORT || config.listen_port || 80);
 //View engine setup
