@@ -2,3 +2,4 @@
 [Bb]in/
 .ntvs_analysis.dat
 node_modules/
+config.json
