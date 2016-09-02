@@ -6,6 +6,17 @@ var User = {
 	salt: String, // Salt for hashing password with
 	password: String, // Hashed ( password + salt )
 
+	twitch: {
+		id: String,
+		username: String,
+		token: String
+	},
+	steam: {
+		id: String,
+		username: String
+	},
+
+
 	profile: {
 		//Maybe implement this at somepoint?
 		// I think it would be nice to have
