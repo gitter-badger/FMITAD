@@ -5,10 +5,27 @@
 		"host": "localhost",
 		"port": 27017,
 
-		"username" : "Admin",
-		"password" : "password",
+		"username" : "",
+		"password" : "",
 
-		"database" : "FMITAD"
+		"database" : "FMITAD",
+		"session_db" : "FMITAD-sessions"
+	},
+
+	"captcha_secret": "",
+
+	"twitch": {
+		"client_id": "7xvdhwr9g5c8vs6q1klhorx6y8pjs4j",
+		"client_secret" : "",
+
+		"redirect_uri": "http://localhost/api/twitch/verify",
+		"scope": ["user_read", "user_subscriptions", "channel_check_subscription", "channel_subscriptions"]
+	},
+
+	"steam": {
+		"api_key" : "",
+		"redirect_uri": "http://localhost/api/steam/verify",
+		"realm": "http://localhost/"
 	}
 
 }
