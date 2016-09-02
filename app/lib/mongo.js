@@ -54,7 +54,7 @@ Mongo.prototype.loadSchemas = function(schemaDir){
 Mongo.prototype.getModel = function(modelName){
 	if (modelName in Models)
 			return Models[modelName];
-	
+
 	console.log("Throwing error : getModel(" + modelName + ")");
 	throw new Error("No model with the name '" +modelName+ "' exists");
 };
@@ -79,10 +79,39 @@ Mongo.prototype.getUri = function(){
 	if (!config.mongo.port)
 		console.log("No port found... Defaulting to '27017'");
 	if (!config.mongo.database)
-		console.log("No database found... Defaulting to 'ScrimSpace'");
+		console.log("No database found... Defaulting to 'FMITAD'");
 
 	//     Add host                   add port OR default               add database OR default
 	uri += config.mongo.host + ":" + (config.mongo.port || 27017) + "/" + (config.mongo.database || "FMITAD");
+
+	//Return the URI
+	return uri;
+};
+
+Mongo.prototype.getSessionUri = function(){
+	var uri = "mongodb://";
+	// If we have a username and password set in the config.json file, use them!
+	if (config.mongo.username && config.mongo.password)
+		uri += config.mongo.username + ":" + config.mongo.password + "@";
+
+	//If the host doesn't exist
+	// OR the host value is empty
+	if ( !config.mongo.host || config.mongo.host == ""){
+		//Since we can't connect to a server without
+		// the host address, we'll just exit this function
+		console.log("ERROR: No host to connect to.");
+		return null;
+	}
+
+	//Just tell the user that we're going to be using default values
+	//since they didn't supply anything
+	if (!config.mongo.port)
+		console.log("No port found... Defaulting to '27017'");
+	if (!config.mongo.session_db)
+		console.log("No session database found... Defaulting to 'FMITAD-sessions'");
+
+	//     Add host                   add port OR default               add database OR default
+	uri += config.mongo.host + ":" + (config.mongo.port || 27017) + "/" + (config.mongo.session_db || "FMITAD-sessions");
 
 	//Return the URI
 	return uri;
