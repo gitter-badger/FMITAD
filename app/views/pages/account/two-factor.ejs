@@ -1,0 +1,27 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <% include ../../partials/head %>
+    </head>
+
+    <body>
+
+        <% include ../../partials/header %>
+
+        <!-- Page Content -->
+        <div class="container">
+
+			<form id="verify-2fa" role="form" method="post" action="">
+				<div class="form-group">
+					<input name="token" type="text" required>
+					<input type="submit" value="Verify" class="btn btn-primary btn-block btn-lg">
+				</div>
+			</form>
+
+        </div>
+        <!-- /.container -->
+
+        <% include ../../partials/footer %>
+        <!-- /.container -->
+    </body>
+</html>

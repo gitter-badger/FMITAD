@@ -6,6 +6,7 @@ var mongo = require("../lib/mongo");
 var crypto = require("../lib/cryptoHelper");
 var uuid = require("uuid4");
 var https = require("https");
+var authenticator = require("authenticator");
 
 function isLoggedIn(req, res, next){
 	if (req.isAuthenticated())
@@ -37,14 +38,61 @@ router.get("/login", isLoggedIn, function(req, res){
 	});
 });
 
+router.get("/session/two-factor", function(req, res, next){
+	// session.temp shoud only be set when comming from /login 
+	if (req.session.temp && req.session.temp.password && req.session.temp.key && req.session.temp.salt){
+		return next();
+	}
+
+	res.redirect("/");
+}, function(req, res){
+	res.render("pages/account/two-factor");
+});
+
+router.post("/session/two-factor", function(req, res, next){
+	if (req.session.temp && req.session.temp.password && req.session.temp.key && req.session.temp.salt){// Session = On server
+		return next();
+	}
+	res.redirect("/");
+
+}, function(req, res){
+	if (!req.body.token){ // They haven't supplied a code... (Is this even possible?)
+		console.log("No token :(");
+		return res.render("pages/account/two-factor"); // Just send them that page again
+	}
+	var token = req.body.token;
+	var password = req.session.temp.password;
+	var key = req.session.temp.key;
+	var salt = req.session.temp.salt;
+	console.log("Temp: "+ JSON.stringify(req.session.temp));
+
+	var auth = authenticator.verifyToken(key, token);
+
+	if(auth){
+		req.login(req.session.temp.user, function(err){
+			if (err)
+				throw new Error ("couldn't log in :(");
+
+			delete req.session.temp; // Delete the temp data... We don't need it now
+			console.log("Success 2fa");
+			res.redirect("/");
+		});
+	}else{
+		// Just silently fail and redirect them to the home page
+		// Maybe log this attempt?
+		res.redirect("/");
+	}
+
+});
+
 router.post("/login", isLoggedIn, function(req, res){
 	var _email = req.body.email;
 	var _password = req.body.password;
-	console.log("Post Login: "+ _email + " ___ " + _password);
+	//console.log("Post Login: "+ _email + " ___ " + _password);
 	mongo.getModel("User").findOne( {email: _email}, function(err, doc){
 		if (err){
 			req.session.error = "Sorry, invalid email/password"
-			res.redirect("/login");
+			return res.redirect("/login");
 		}
 
 		if (!doc){
@@ -53,12 +101,24 @@ router.post("/login", isLoggedIn, function(req, res){
 		}else{
 			if (crypto.checkPassword(doc.salt, _password, doc.password)){
 				//Success!
-				req.login(doc, function(err){
-					if (err)
-						throw new Error ("couldn't log in :(");
+				if (doc.two_factor.enabled && true){
+					//TODO: 2FA
+					req.session.temp = {};
+					req.session.temp.password = _password;
+					req.session.temp.salt = doc.salt;
+					req.session.temp.key = doc.two_factor.key;
+					req.session.temp.user = doc;
+					//console.log("Securing 2fa");
 
-					res.redirect("/");
-				});
+					return res.redirect("/session/two-factor");
+				}else{
+					req.login(doc, function(err){
+						if (err)
+							throw new Error ("couldn't log in :(");
+
+						res.redirect("/");
+					});
+				}
 			}else{
 				req.session.error = "Sorry, invalid email/password"
 				res.redirect("/login");
@@ -106,7 +166,7 @@ router.post("/signup", isLoggedIn, function(req, result){
 	//TODO: Handler user creation
 	var key = req.body["g-recaptcha-response"];
 
-	console.log("Got a POST request...: " + JSON.stringify(req.body));
+	//console.log("Got a POST request...: " + JSON.stringify(req.body));
 
 	https.get("https://www.google.com/recaptcha/api/siteverify?secret=" + config.captcha_secret + "&response=" + key, function(res) {
 
