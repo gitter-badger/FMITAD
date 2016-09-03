@@ -25,8 +25,9 @@ var User = {
 	},
 
 	two_factor: {
-		enabled: {type: Boolean, default: false}  // Wether they have 2FA enabled or not
-		//type: String // App, Sms??
+		enabled: {type: Boolean, default: false},  // Wether they have 2FA enabled or not
+		key: String // The shared secret
+		
 		/*
 			Since I'm not a security expert, I've decided not to allow Sms
 			2FA because it would mean storing user's phone number

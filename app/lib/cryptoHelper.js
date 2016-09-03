@@ -37,4 +37,23 @@ Helper.checkPassword = function(salt, plainpass, cipherpass){
 	return pass == cipherpass;
 };
 
+
+Helper.encryptData = function( password, plaintext ){
+	var cipher = crypto.createCipher(cipherAlgo, password);
+
+	var r = cipher.update(plaintext, "utf8", "hex");
+	r += cipher.final("hex");
+
+	return r;
+};
+
+Helper.decryptData = function( password, ciphertext ){
+	var cipher = crypto.createDecipher(cipherAlgo, password );
+
+	var r = cipher.update(ciphertext, "hex",  "utf8");
+	r += cipher.final("utf8");
+
+	return r;
+};
+
 module.exports = Helper;

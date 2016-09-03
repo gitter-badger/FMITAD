@@ -33,13 +33,12 @@ app.use(session({
 		touchAfter: 24 * ( 60 * 60) // Only allow one update in 24hrs (unless session is changed)
 	}),
     secret : process.env.SECRET || "5c5b6c82-a57d-4150-aa22-6181c4b122f8",
-    cookie: { maxAge: (24 * (60 * 60000)) }, //After a day of inactivity, session will expire
+    cookie: { maxAge: (60 * 60000) }, //After an hr of inactivity, session will expire
     resave: false,
     saveUninitialized: false
 }));
 app.use(passport.initialize());
 app.use(passport.session());
-
 
 //Defined routes.
 var rootRoute = require("./routes/index");
@@ -48,6 +47,8 @@ app.use("/", require("./routes/auth"));
 
 var apiRoute = require("./routes/api");
 app.use("/api", apiRoute);
+
+app.use("/account", require("./routes/account"));
 
 // Start listening on the specified port
 server.listen(app.get("port"), function(){
