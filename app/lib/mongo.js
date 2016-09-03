@@ -7,6 +7,13 @@ var Schema = mongoose.Schema;
 // An array to hold our Models
 var Models = [];
 
+/*
+	Constructor for this module.
+	This should set up the connection to the mongodb and make sure the models are ready to use
+
+	It should use the data from config.json to build the URIs
+	It should look in the "schemas/" directory for the schemas to create models with
+*/
 function Mongo(){
 	if (!(this instanceof Mongo)){
 		return new Mongo();
@@ -29,6 +36,9 @@ function Mongo(){
 	console.log("Schemas loaded.");
 };
 
+/*
+
+*/
 Mongo.prototype.loadSchemas = function(schemaDir){
 	var fs = require("fs");
 	fs.readdirSync(schemaDir).forEach(function(filename){
@@ -51,6 +61,21 @@ Mongo.prototype.loadSchemas = function(schemaDir){
 	});
 };
 
+/*
+	Allows other files to gain access to the models constructed.
+
+	To create a new entry in the DB do:
+		var model = new getModel( ModelName )();
+		model.save ( function(err) );
+
+	To search the DB do:
+		getModel( ModelName ).find( { } )
+
+	If the model doesn't exist, then the function will throw an error
+
+	modelName is case-sensitive (the filename found in "schemas/")
+
+*/
 Mongo.prototype.getModel = function(modelName){
 	if (modelName in Models)
 			return Models[modelName];
@@ -59,6 +84,7 @@ Mongo.prototype.getModel = function(modelName){
 	throw new Error("No model with the name '" +modelName+ "' exists");
 };
 
+// Constructs and return the URI to connect to the main DB
 Mongo.prototype.getUri = function(){
 	var uri = "mongodb://";
 	// If we have a username and password set in the config.json file, use them!
@@ -88,6 +114,7 @@ Mongo.prototype.getUri = function(){
 	return uri;
 };
 
+// Constructs and returns the URI to connect to the session DB
 Mongo.prototype.getSessionUri = function(){
 	var uri = "mongodb://";
 	// If we have a username and password set in the config.json file, use them!

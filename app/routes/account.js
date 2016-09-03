@@ -5,11 +5,12 @@ var router = express.Router();
 var authenticator = require("authenticator");
 var mongo = require("../lib/mongo");
 
+// Only allow passthrough to the next middleware if they're logged in
 function ensureAuth(req, res, next){
 	if (req.isAuthenticated())
 		return next();
 
-	res.redirect("/");
+	res.redirect(req.get("Referrer") || "/");
 };
 router.use(ensureAuth);
 

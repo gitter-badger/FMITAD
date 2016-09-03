@@ -3,14 +3,7 @@ var express = require("express");
 var router = express.Router();
 var passport = require("passport");
 
-// These are all mounted at /api
-
-// /api/login
-router.post("/login", function(req, res){
-	//TODO: Log the user in then re-direct them home
-});
-
-// /api/signout
+// Destroy the session (log the user out) then send them to the home page
 router.get("/signout", function(req, res){
 	//TODO: Sign the user out then re-direct them home
 	req.session.destroy(function(err){
@@ -53,13 +46,13 @@ router.get("/users/delete", function(req, res){
 	});
 });
 
-router.get("/steam/verify", passport.authenticate("steam", {
+router.get("/steam/verify", passport.authorize("steam", {
 	failureRedirect: "/error",
 	successRedirect: "/"
 	})
 );
 
-router.get("/twitch/verify", passport.authenticate("twitch", {
+router.get("/twitch/verify", passport.authorize("twitch", {
 	failureRedirect: "/error",
 	successRedirect: "/"
 	})

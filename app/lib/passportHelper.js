@@ -1,5 +1,9 @@
 var mongoUtil = require("./mongo");
 var config = require("../../config.json");
+
+/*
+	Set up passport to use the stratgies. The stratgies should be setup using data from the config.json file
+*/
 module.exports = function(passport){
 
 	var steamStrategy = require("../strategy/steamStrategy"),
@@ -12,9 +16,9 @@ module.exports = function(passport){
 		apiKey: config.steam.api_key,
 		passReqToCallback: true
 		},
+		// Executed when authorized
 		function(req, identifier, profile, done){
 			mongoUtil.getModel("User").findOne({id: req.user.id}, function(err, user){
-
 				user.steam.id = profile.id;
 				user.steam.username = profile.displayName;
 				user.save(function(err){
@@ -52,15 +56,12 @@ module.exports = function(passport){
 
 		}
 	));
-
+	
 	passport.serializeUser(function(user, done){
-		console.log("Serialize: " + JSON.stringify(user));
 		done(null, user.id);
 	});
 
 	passport.deserializeUser(function(obj, done){
-		console.log("Deserialize: " + JSON.stringify(obj));
-
 		mongoUtil.getModel("User").findOne({id: obj}, function(err, user){
 			done (err, user);
 		});

@@ -23,7 +23,6 @@ helper(app);
 
 // setting up express
 app.use(express.static(path.join(__dirname, "public"))); // make sure it mounts the folders in /public
-
 app.use(cookieParser(process.env.SECRET || "5c5b6c82-a57d-4150-aa22-6181c4b122f8")); // use the cookie middleware
 app.use(bodyParser.json()); // allow us to recievv JSON data
 app.use(bodyParser.urlencoded( {extended: true} )); // I can't remember what this does.
@@ -36,19 +35,15 @@ app.use(session({
     cookie: { maxAge: (60 * 60000) }, //After an hr of inactivity, session will expire
     resave: false,
     saveUninitialized: false
-}));
+}));// Set up sessions
 app.use(passport.initialize());
 app.use(passport.session());
 
 //Defined routes.
-var rootRoute = require("./routes/index");
-app.use("/", rootRoute);
-app.use("/", require("./routes/auth"));
-
-var apiRoute = require("./routes/api");
-app.use("/api", apiRoute);
-
-app.use("/account", require("./routes/account"));
+app.use("/", require("./routes/index")); // Our "/" routes
+app.use("/", require("./routes/auth")); // Handle "/login", "/signup" and "/session/two-factor"
+app.use("/api", require("./routes/api")); // Our "/api" routes
+app.use("/account", require("./routes/account")); // Our "/account" routes
 
 // Start listening on the specified port
 server.listen(app.get("port"), function(){

@@ -10,6 +10,17 @@ var router = express.Router();
 
 var passport = require("passport");
 
+function ensureAuth(req, res, next){
+	if (req.isAuthenticated())
+		return next();
+
+	res.redirect(req.get("Referrer") || "/");
+};
+
+/*
+	Main page handler.
+	Render "index.ejs" to the user and supply it with the data it needs.
+*/
 router.get("/", function(req, res){
 	res.render("pages/index", {});
 });
@@ -20,7 +31,7 @@ router.get("/debug-layout", function(req, res){
 	res.render("pages/layout", {});
 });
 
-router.get("/connect/steam", function(req, res, next){
+router.get("/connect/steam", ensureAuth, function(req, res, next){
 	if (req.user.steam.id){
 		console.log("User has already authoerized steam");
 		return res.redirect(req.get("Referer") || "/");
@@ -32,7 +43,7 @@ router.get("/connect/steam", function(req, res, next){
 	res.redirect(req.get("Referer") || "/signup"); // Send them back where they came, or make them signup
 }, passport.authorize("steam"));
 
-router.get("/connect/twitch", function(req, res, nxt){
+router.get("/connect/twitch", ensureAuth, function(req, res, nxt){
 	if (req.user.twitch.id){
 		console.log("User has already authorized twitch");
 		return res.redirect(req.get("Referer") || "/");;
