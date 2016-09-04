@@ -4,6 +4,7 @@ var express = require("express");
 var router = express.Router();
 var authenticator = require("authenticator");
 var mongo = require("../lib/mongo");
+var crypto = require("../lib/cryptoHelper");
 
 // Only allow passthrough to the next middleware if they're logged in
 function ensureAuth(req, res, next){
@@ -16,25 +17,26 @@ router.use(ensureAuth);
 
 
 router.get("/", function(req, res){
+	res.send("Hello :D");
 });
 
-router.get("/mfa", function(req, res){
+router.get("/mfa/:password", function(req, res){
 	var key = "";
 	if (req.user.two_factor.key){
 		//.. They already have a key...
 		key = req.user.two_factor.key;
 	}else{
 		key = authenticator.generateKey();
+		mongo.getModel("User").findOne({id: req.user.id}, function(err, doc){
+			doc.two_factor.key = crypto.encryptData(req.params.password + doc.salt, key);
 
-
-	}
-	mongo.getModel("User").findOne({id: req.user.id}, function(err, doc){
-		doc.two_factor.key = key;
-		doc.two_factor.enabled = true;
-		doc.save(function(error){
-			console.log("Saved token to user's account: " + err +"_" + error);
+			doc.two_factor.enabled = true;
+			doc.save(function(error){
+				console.log("Saved token to user's account: " + err +"_" + error);
+			});
 		});
-	});
+		// User#two_factor.key = encrypted
+	}
 
 	var uri = authenticator.generateTotpUri(
 		key, req.user.username, "FMITAD",
@@ -46,10 +48,14 @@ router.get("/mfa", function(req, res){
 	});
 });
 
-router.post("/mfa", function(req, res){
-	var token = req.body.token;
-	var key = req.user.two_factor.key;
+router.get("/mfa", function(req, res){
 
+});
+
+router.post("/mfa/:password", function(req, res){
+	var token = req.body.token;
+	var key = crypto.decryptData(req.params.password + req.user.salt, req.user.two_factor.key);
+	console.log("Decrypted key: " + key);
 	var auth = authenticator.verifyToken(key, token);
 	var err, succ;
 

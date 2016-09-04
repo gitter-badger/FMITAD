@@ -78,9 +78,9 @@ router.post("/session/two-factor", function(req, res, next){
 	}
 
 	var token = req.body.token;
-	var key = req.session.temp.key;
+	var key = crypto.decryptData(req.session.password + req.session.temp.user.salt, req.session.temp.key);
 
-	console.log("Temp: "+ JSON.stringify(req.session.temp));
+	console.log("Temp: "+ key);
 
 	var auth = authenticator.verifyToken(key, token);
 
@@ -131,6 +131,10 @@ router.post("/login", isLoggedIn, function(req, res){
 		}else{
 			if (crypto.checkPassword(doc.salt, _password, doc.password)){
 				//Success!
+
+				//TODO: Remove this line and add some "password prompts" to get password from user
+				req.session.password = _password; // Used to decrypt data..
+
 				if (doc.two_factor.enabled && true){
 					//TODO: 2FA
 					req.session.temp = {};

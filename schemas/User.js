@@ -5,11 +5,12 @@ var User = {
 	email : {type: String, unique: true},
 	salt: String, // Salt for hashing password with
 	password: String, // Hashed ( password + salt )
+	verified: Boolean, // Like twitter verified?
 
 	twitch: {
 		id: String,
 		username: String,
-		token: String
+		token: String // Encrypted, same as "two_factor.key"
 	},
 	steam: {
 		id: String,
@@ -27,7 +28,7 @@ var User = {
 	two_factor: {
 		enabled: {type: Boolean, default: false},  // Wether they have 2FA enabled or not
 		key: String // The shared secret
-		
+
 		/*
 			Since I'm not a security expert, I've decided not to allow Sms
 			2FA because it would mean storing user's phone number

@@ -11,6 +11,39 @@ router.get("/signout", function(req, res){
 	});
 });
 
+router.get("/dump-session", function(req, res){
+	res.send(req.session.passport);
+});
+
+router.get("/set-data/:password", function(req, res){
+	var pass = req.params.password;
+	var data = req.user.two_factor.key;
+	var crypto = require("../lib/cryptoHelper");
+
+	console.log("Encrypting: " + data);
+	console.log("With password: "+ pass);
+
+	var ciphertext = crypto.encryptData(pass + req.user.salt, data);
+
+	console.log("Encrypted: " +ciphertext);
+	res.redirect("/api/get-data/" + pass + "?data=" + ciphertext);
+});
+
+router.get("/get-data/:password", function(req, res){
+	var pass = req.params.password;
+	var data = req.query.data;
+	var crypto = require("../lib/cryptoHelper");
+
+	console.log("Decrypting: " + data);
+	console.log("With password: "+ pass);
+
+	var plaintext = crypto.decryptData(pass + req.user.salt, data);
+
+	console.log("Plaintext: " +plaintext);
+
+	res.send(plaintext);
+});
+
 router.get("/model/:model", function(req, res){
 	var mongo = require("../lib/mongo");
 	var Model = new mongo.getModel(req.params.model);
@@ -47,15 +80,29 @@ router.get("/users/delete", function(req, res){
 });
 
 router.get("/steam/verify", passport.authorize("steam", {
-	failureRedirect: "/error",
-	successRedirect: "/"
-	})
-);
+	failureRedirect: "/"
+}), function (req, res){
+	res.send("Linked!");
+});
+
+router.get("/steam/delete", function(req, res){
+	req.user.steam = {};
+	req.user.save(function(_err){
+		res.send("Deleted steam");
+	});
+});
+
+router.get("/twitch/delete", function(req, res){
+	req.user.twitch = {};
+	req.user.save(function(_err){
+		res.send("Deleted twitch");
+	});
+});
 
 router.get("/twitch/verify", passport.authorize("twitch", {
-	failureRedirect: "/error",
-	successRedirect: "/"
-	})
-);
+	failureRedirect: "/"
+}), function(req, res){
+	res.send("Linked?");
+});
 
 module.exports = router;

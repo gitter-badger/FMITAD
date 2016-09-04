@@ -25,6 +25,10 @@ router.get("/", function(req, res){
 	res.render("pages/index", {});
 });
 
+router.get("/error", function(req, res){
+	res.render("pages/error");
+});
+
 //Just send out the layout page
 // mainly for debugging what CSS files look like
 router.get("/debug-layout", function(req, res){

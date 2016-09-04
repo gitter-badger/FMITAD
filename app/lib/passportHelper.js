@@ -1,5 +1,6 @@
 var mongoUtil = require("./mongo");
 var config = require("../../config.json");
+var crypto = require("../lib/cryptoHelper");
 
 /*
 	Set up passport to use the stratgies. The stratgies should be setup using data from the config.json file
@@ -11,24 +12,29 @@ module.exports = function(passport){
 
 	//Define passport usage
 	passport.use(new steamStrategy({
-		returnURL: config.steam.redirect_uri,
-		realm: "http://localhost/",
-		apiKey: config.steam.api_key,
-		passReqToCallback: true
+			returnURL: config.steam.redirect_uri,
+			realm: "http://localhost/",
+			apiKey: config.steam.api_key,
+			passReqToCallback: true
 		},
 		// Executed when authorized
 		function(req, identifier, profile, done){
-			mongoUtil.getModel("User").findOne({id: req.user.id}, function(err, user){
+			process.nextTick(function(){
+				if (!req.user){
+					return done("Not logged in!");
+				}
+				var user = req.user;
+
 				user.steam.id = profile.id;
 				user.steam.username = profile.displayName;
-				user.save(function(err){
-					if (err)
-						throw new Error(err);
-					done(null, user);
+				user.save(function(_err){
+					if (_err)
+						throw _err;
+					console.log("Returning : " + JSON.stringify(user));
+					return done(null, user);
 				});
 
 			});
-
 		}
 	));
 	passport.use(new twitchStrategy({
@@ -38,11 +44,15 @@ module.exports = function(passport){
 			scope: config.twitch.scope.join(" "),
 			passReqToCallback: true
 		}, function(req, accesstoken, refreshtoken, profile, done){
+			process.nextTick(function(){
+				if (!req.user){
+					return done("Not logged in!");
+				}
 
-			mongoUtil.getModel("User").findOne({id: req.user.id}, function(err, user){
+				var user = req.user;
 				console.log("Twitch updating (" + accesstoken + "): "+ JSON.stringify(profile));
 
-				user.twitch.token = accesstoken;
+				user.twitch.token = crypto.encryptData(req.session.password + req.user.salt, accesstoken);
 				user.twitch.id = profile.id;
 				user.twitch.username = profile.username;
 
@@ -56,7 +66,7 @@ module.exports = function(passport){
 
 		}
 	));
-	
+
 	passport.serializeUser(function(user, done){
 		done(null, user.id);
 	});
