@@ -20,6 +20,8 @@ router.get("/", function(req, res){
 	res.send("Hello :D");
 });
 
+
+//TODO: Move into something like /account/security/two-factor
 router.get("/mfa/:password", function(req, res){
 	var key = "";
 	if (req.user.two_factor.key){
@@ -46,10 +48,6 @@ router.get("/mfa/:password", function(req, res){
 		key: key,
 		otp_uri: uri
 	});
-});
-
-router.get("/mfa", function(req, res){
-
 });
 
 router.post("/mfa/:password", function(req, res){

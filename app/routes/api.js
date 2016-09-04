@@ -11,6 +11,45 @@ router.get("/signout", function(req, res){
 	});
 });
 
+function authOnly(req, res, next){
+	if (req.isAuthenticated())
+		return next();
+
+	res.redirect(req.get("Referrer") || "/login");
+};
+router.use(authOnly); // Only allow authenticated user to access /api :D
+
+// verify that the user has authorized the application, then redirect to the previous page or /account
+// If they already authorized, then boot them back
+router.get("/steam/verify",function(req, res, next){
+	if (req.user.steam.id)
+		return res.redirect(req.get("Referer") || "/");
+	next();
+}, passport.authorize("steam", {
+	failureRedirect: "/"
+}), function (req, res){
+	res.redirect(req.get("Referer") || "/account");
+});
+
+// verify that the user has authorized the application, then redirect to the previous page or /account
+router.get("/twitch/verify",function(req, res, next){
+	if (req.user.twitch.id)
+		return res.redirect(req.get("Referer") || "/");
+	next();
+}, passport.authorize("twitch", {
+	failureRedirect: "/"
+}), function(req, res){
+	res.redirect(req.get("Referer") || "/account");
+});
+
+/*
+########################################################################
+	DEBUG ROUTES BELOW
+	DELETE WHEN DONE DEVELOPING/DEBUGGING
+	SERIOUSLY, YOU DON'T WANT USERS TO ACCESS THE BELOW
+########################################################################
+*/
+
 router.get("/dump-session", function(req, res){
 	res.send(req.session.passport);
 });
@@ -67,6 +106,7 @@ router.get("/users", function(req, res){
 	});
 
 });
+
 router.get("/users/delete", function(req, res){
 	var mongo = require("../lib/mongo");
 	var m = mongo.getModel("User");
@@ -77,12 +117,6 @@ router.get("/users/delete", function(req, res){
 		});
 		res.redirect("/api/users");
 	});
-});
-
-router.get("/steam/verify", passport.authorize("steam", {
-	failureRedirect: "/"
-}), function (req, res){
-	res.send("Linked!");
 });
 
 router.get("/steam/delete", function(req, res){
@@ -97,12 +131,6 @@ router.get("/twitch/delete", function(req, res){
 	req.user.save(function(_err){
 		res.send("Deleted twitch");
 	});
-});
-
-router.get("/twitch/verify", passport.authorize("twitch", {
-	failureRedirect: "/"
-}), function(req, res){
-	res.send("Linked?");
 });
 
 module.exports = router;
