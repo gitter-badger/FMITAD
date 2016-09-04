@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+		<% title="About Us" %>
+        <% include ../partials/head %>
+    </head>
+
+    <body>
+
+        <% include ../partials/header %>
+
+        <!-- Page Content -->
+        <div class="container">
+			<div class="jumbotron">
+				<h2>About Us</h2>
+				<p>Want to know more about us? Then you've come to the right place.</p>
+			</div>
+
+			<div class="panel-group" id="about-panels">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">
+							<a data-toggle="collapse" data-parent="#about-panels" href="#who-are-we">Who are we?</a>
+						</h3>
+					</div>
+					<div id="who-are-we" class="panel-collapse collapse">
+						<div class="panel-body">
+							We are just two people who thought that creating this web app would better improve streamer's lives.
+						</div>
+					</div>
+				</div>
+
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">
+							<a data-toggle="collapse" data-parent="#about-panels" href="#site-does">What does this site do?</a>
+						</h3>
+					</div>
+					<div id="site-does" class="panel-collapse collapse">
+						<div class="panel-body">
+							<p>
+								This site allows streamers to create events for their streams. This is currently limited to creating game
+							lobbies. Once they have created the event, the fans can request to join. This will give the streamer a nice
+							list of their fans who can join their current game.
+							</p>
+							<p>
+								We do this by using the <a data-toggle="collapse" data-parent="#about-panels" href="#data-usage">data</a> you supply to us. For a better explaination, have a look at
+								<a data-toggle="collapse" data-parent="#about-panels" href="#how-it-works">how it works</a>
+							</p>
+						</div>
+					</div>
+				</div>
+
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">
+							<a data-toggle="collapse" data-parent="#about-panels" href="#data-usage">What data do we use?</a>
+						</h3>
+					</div>
+					<div id="data-usage" class="panel-collapse collapse">
+						<div class="panel-body">
+							<p>We only collect data about you that we need in order to work. In other words, we will <b>never</b>
+								ask for access to data we don't need (e.g. <a href="https://facebook.com/me">your Facebook account</a>)
+							</p>
+							<p>Below you can find a neat table showing you what data we have about you and what we use it for.
+								<small>If you're worried about security, check our <a data-toggle="collapse" data-parent="#about-panels" href="#security">security practices</a></small>
+							<p>
+						</div>
+						<div class="table-responsive">
+							<table id="data-usage-table" class="table table-bordered" style="width: 100%">
+								<tr>
+									<th>What we want from you</th>
+									<th>Why we want it</th>
+								</tr>
+
+								<tr>
+									<td>Email address</td>
+									<td>
+										<p>We want your email adress so that we can create an account for you on this website.
+											You will then use the email (and password) you signed up with to log in!</p>
+										<small>Because we allow anyone to have any usename, the email is also a way to verify that
+											you are you!</small>
+										</td>
+								</tr>
+
+								<tr>
+									<td>Steam ID</td>
+									<td>When you join a event that is on the Steam platform we send this to the Streamer
+										so they know what your <a href="https://www.google.co.uk/webhp?sourceid=chrome-instant&ion=1&espv=2&ie=UTF-8#q=what%20is%20a%20steam%20id">steam ID</a> is</td>
+								</tr>
+
+								<tr>
+									<td>Steam username</td>
+									<td>When you join a event we send this to the streamer as well, this just makes it
+										easier for the streamer to know what everyone is going to be called when they join the game</td>
+								</tr>
+
+								<tr>
+									<td>Twitch ID</td>
+									<td>We collect this for two differnt reasons.
+										<ul>
+											<li>Connect the streamer's account to the event. This makes it easier for the fans to find the streamer's events</li>
+											<li>Verify that a fan is a fan (subscribed to the streamer on Twitch)</li>
+										</ul>
+									</td>
+								</tr>
+
+								<tr>
+									<td>Twitch username</td>
+									<td>We only collect this to show to the Streamer. Whilst they will never get your Twitch ID, they will see your Twitch username</td>
+								</tr>
+
+							</table>
+						</div>
+
+					</div>
+				</div>
+
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">
+							<a data-toggle="collapse" data-parent="#about-panels" href="#how-it-works">How the website works</a>
+						</h3>
+					</div>
+					<div id="how-it-works" class="panel-collapse collapse">
+						<div class="panel-body">
+							<p>This may take a while to explain so, here's the TL;DR - <i>It's all magic!</i></p>
+
+							<p>Not satisfied with the TL;DR? <a data-toggle="collapse" href="#seriously-how-it-work">Click here</a></p>
+							<div id="seriously-how-it-work" class="well collapse">
+								<p><!-- Explain here... --></p>
+							</div>
+
+						</div>
+					</div>
+				</div>
+
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">
+							<a data-toggle="collapse" data-parent="#about-panels" href="#security">What about security?</a>
+						</h3>
+					</div>
+					<div id="security" class="panel-collapse collapse">
+						<div class="panel-body">
+							<p>We take security very seriously. That's why we <small style="font-size: 10px"><i>try our best to</i></small>
+								secure all sensitve data using encryption algorithms.<p>
+							<p>We do this using the password you supplied when you signed up. This means <b>you and only you</b>
+								can decrypt this data. It also has the downside of meaning that if you loose your password,
+								the data is also lost (So, please try and remember your password).</p>
+						</div>
+					</div>
+				</div>
+
+				<!-- TEMPLATE FOR PANELS
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">
+							<a data-toggle="collapse" data-parent="#about-panels" href="#MY_ID">TITLE HERE</a>
+						</h3>
+					</div>
+					<div id="MY_ID" class="panel-collapse collapse">
+						<div class="panel-body">
+
+						</div>
+					</div>
+				</div>
+				-->
+
+			</div>
+
+        </div>
+        <!-- /.container -->
+
+        <% include ../partials/footer %>
+
+		<script>
+			var id = window.location.hash.substr(1);
+			$("#" +id).collapse("show"); // If they were given the URL (e.g. /about#security ) then show the panel
+		</script>
+        <!-- /.container -->
+    </body>
+</html>
