@@ -5,6 +5,10 @@ var User = {
 	email : {type: String, unique: true},
 	salt: String, // Salt for hashing password with
 	password: String, // Hashed ( password + salt )
+
+	isAdmin: {type: Boolean, default: false}, // Is this user an Admin?
+	isMod: {type: Boolean, default: false}, // Is this user a Moderator?
+
 	verified: Boolean, // Like twitter verified?
 
 	twitch: {

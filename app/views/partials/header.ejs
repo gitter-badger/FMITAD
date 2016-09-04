@@ -14,7 +14,19 @@
         </div>
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <% if (typeof user == 'undefined') { %>
+
+			<!-- Main bit of nav bar (shown to all) -->
+			<ul class="nav navbar-nav">
+				<li>
+					<a href="/about">About</a>
+				</li>
+				<li>
+					<a href="#">Events</a>
+				</li>
+			</ul>
+
+			<!-- User specific navbar -->
+			<% if (typeof user == 'undefined') { %>
                 <ul class="nav navbar-nav navbar-right">
                     <!-- Not logged in! -->
                     <li>
@@ -22,27 +34,27 @@
                     </li>
                 </ul>
             <% } else { %>
-                <ul class="nav navbar-nav">
-                    <li>
-                        <a href="#">Some Link</a>
-                    </li>
-                    <li>
-                        <a href="#">Notifications</a>
-                    </li>
-                </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <!-- Logged in! -->
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><%= user.username %> <span class="caret"></span></a>
                         <ul class="dropdown-menu">
-                            <li><a href="#">Feedback</a></li>
+							<!-- This long link sends the user to Github and starts to create a new issue, giving them a template to work off (if they choose) -->
+                            <li><a href="https://github.com/TGRHavoc/FMITAD/issues/new?title=Issue+from+<%= user.username %>&body=Id:+<%= user.id %>%0AComment:+Please+enter+your+issue+here">Feedback/Bug report</a></li>
                             <li><a href="#">Support</a></li>
                             <li role="separator" class="divider"></li>
                             <li><a href="/logout">Log out</a></li>
                         </ul>
                     </li>
+					<% if (user.isAdmin) { %>
+						<!-- Display Admin-Only content here (e.g. /admin ?) -->
+					<% } %>
+					<% if (user.isAdmin || user.isMod) { %>
+						<!-- Display moderator content here -->
+					<% } %>
                 </ul>
             <% } %>
+			<!-- End of User specific navbar -->
 
         </div>
         <!-- /.navbar-collapse -->
