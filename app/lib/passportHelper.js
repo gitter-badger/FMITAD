@@ -23,17 +23,23 @@ module.exports = function(passport){
 				if (!req.user){
 					return done("Not logged in!");
 				}
-				var user = req.user;
 
-				user.steam.id = profile.id;
-				user.steam.username = profile.displayName;
-				user.save(function(_err){
-					if (_err)
-						throw _err;
-					console.log("Returning : " + JSON.stringify(user));
-					return done(null, user);
+				mongoUtil.findOne({ steam.id: profile.id }, function(err, doc){
+					if (err || doc)
+						return done( err || "Account already linked to " + doc.id); // If the account is linked
+
+					var user = req.user;
+
+					user.steam.id = profile.id;
+					user.steam.username = profile.displayName;
+					user.save(function(_err){
+						if (_err)
+							throw _err;
+						console.log("Returning : " + JSON.stringify(user));
+						return done(null, user);
+					});
+					
 				});
-
 			});
 		}
 	));
@@ -49,18 +55,23 @@ module.exports = function(passport){
 					return done("Not logged in!");
 				}
 
-				var user = req.user;
-				console.log("Twitch updating (" + accesstoken + "): "+ JSON.stringify(profile));
+				mongoUtil.findOne({ twitch.id: profile.id }, function(err, doc){
+					if (err || doc)
+						return done( err || "Account already linked to " + doc.id); // If the account is linked
 
-				user.twitch.token = crypto.encryptData(req.session.password + req.user.salt, accesstoken);
-				user.twitch.id = profile.id;
-				user.twitch.username = profile.username;
+					var user = req.user;
+					console.log("Twitch updating (" + accesstoken + "): "+ JSON.stringify(profile));
 
-				user.save(function(err){
-					if (err)
-						throw new Error(err);
+					user.twitch.token = crypto.encryptData(req.session.password + req.user.salt, accesstoken);
+					user.twitch.id = profile.id;
+					user.twitch.username = profile.username;
 
-					done(null, user);
+					user.save(function(err){
+						if (err)
+							throw new Error(err);
+
+						done(null, user);
+					});
 				});
 			});
 
