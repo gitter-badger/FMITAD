@@ -39,6 +39,15 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
+// Make sure we can access the user's data from EJS files.
+app.use(function(req, res, next){
+	if (req.isAuthenticated()){ // Only do it they're logged in tho..
+		res.locals.user = req.user;
+	}
+
+	next();
+});
+
 //Defined routes.
 app.use("/", require("./routes/index")); // Our "/" routes
 app.use("/", require("./routes/auth")); // Handle "/login", "/signup" and "/session/two-factor"
@@ -49,7 +58,6 @@ app.use("/account", require("./routes/account")); // Our "/account" routes
 server.listen(app.get("port"), function(){
 	console.log("Server listening on port: " + app.get("port"));
 });
-
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

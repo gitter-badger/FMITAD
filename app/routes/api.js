@@ -3,14 +3,6 @@ var express = require("express");
 var router = express.Router();
 var passport = require("passport");
 
-// Destroy the session (log the user out) then send them to the home page
-router.get("/signout", function(req, res){
-	//TODO: Sign the user out then re-direct them home
-	req.session.destroy(function(err){
-		res.redirect("/");
-	});
-});
-
 function authOnly(req, res, next){
 	if (req.isAuthenticated())
 		return next();

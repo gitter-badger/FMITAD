@@ -18,6 +18,19 @@ router.get("/", function(req, res){
 	res.render("pages/index", {});
 });
 
+router.get("/about", function(req,res){
+	res.render("pages/about");
+});
+
+// Destroy the session (log the user out) then send them to the home page
+router.get("/logout", function(req, res){
+	if (req.isAuthenticated()){
+		req.session.destroy(function(err){
+			res.redirect("/");
+		});
+	}
+});
+
 router.get("/error", function(req, res){
 	res.render("pages/error");
 });

@@ -24,7 +24,7 @@ router.get("/signup", isLoggedIn, function(req, res){
 		delete req.session.error;
 	}
 
-	res.render("pages/signup", {
+	res.render("pages/auth/signup", {
 		error: e
 	});
 });
@@ -38,7 +38,7 @@ router.get("/login", isLoggedIn, function(req, res){
 		delete req.session.error;
 	}
 
-	res.render("pages/login", {
+	res.render("pages/auth/login", {
 		error: e
 	});
 });
@@ -54,7 +54,7 @@ router.get("/session/two-factor", function(req, res, next){
 	// If they don't have the data we need.. Just kick them to the curb
 	res.redirect("/");
 }, function(req, res){
-	res.render("pages/account/two-factor");
+	res.render("pages/auth/two-factor");
 });
 
 //Handle the 2fa stuff..
@@ -74,7 +74,7 @@ router.post("/session/two-factor", function(req, res, next){
 
 }, function(req, res){
 	if (!req.body.token){ // They haven't supplied a code... (Is this even possible?)
-		return res.render("pages/account/two-factor"); // Just send them that page again
+		return res.render("pages/auth/two-factor"); // Just send them that page again
 	}
 
 	var token = req.body.token;
