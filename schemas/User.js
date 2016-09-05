@@ -1,7 +1,7 @@
 var User = {
 
 	id : {type: String, unique: true }, //UUID4 format, allows for multiple people to have same username
-	username : {type: String, unique: false}, //Turn to true if we don't want multiple people with same username...
+	username : {type: String, unique: true}, //Turn to true if we don't want multiple people with same username...
 	email : {type: String, unique: true},
 	salt: String, // Salt for hashing password with
 	password: String, // Hashed ( password + salt )

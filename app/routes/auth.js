@@ -24,6 +24,7 @@ router.get("/signup", isLoggedIn, function(req, res){
 		delete req.session.error;
 	}
 
+	console.log("error:" + e);
 	res.render("pages/auth/signup", {
 		error: e
 	});
@@ -119,16 +120,17 @@ router.post("/session/two-factor", function(req, res, next){
 router.post("/login", isLoggedIn, function(req, res){
 	var _email = req.body.email;
 	var _password = req.body.password;
-	mongo.getModel("User").findOne( {email: _email}, function(err, doc){
+	mongo.getModel("User").findOne( {$or: [ {email: _email}, {username: _email} ]}, function(err, doc){
 		if (err){
-			req.session.error = "Sorry, invalid email/password"
+			req.session.error = "Sorry, invalid email/username & password"
 			return res.redirect("/login");
 		}
 
 		if (!doc){
-			req.session.error = "No account with that email"
+			req.session.error = "No account with that email/username"
 			res.redirect("/signup");
 		}else{
+			console.log("Loggin in: " + JSON.stringify(doc));
 			if (crypto.checkPassword(doc.salt, _password, doc.password)){
 				//Success!
 
@@ -151,7 +153,7 @@ router.post("/login", isLoggedIn, function(req, res){
 					});
 				}
 			}else{
-				req.session.error = "Sorry, invalid email/password"
+				req.session.error = "Sorry, invalid email/username & password"
 				res.redirect("/login");
 			}
 		}
@@ -194,8 +196,10 @@ router.post("/signup", isLoggedIn, function(req, result){
                     if (parsedData.success){
 
 						signUp(req.body, function(err, user){
-							if (err)
-								throw new Error(err);
+							if (err){
+								req.session.error = err;
+								return result.redirect("/signup");
+							}
 
 							req.login(user, function(err){
 								if (err)
@@ -239,13 +243,16 @@ function signUp( data, next ){
 	var _email = data.email;
 	var _password = data.password;
 
-	mongo.getModel("User").findOne({email: _email}, function(err, doc){
+	mongo.getModel("User").findOne( {$or: [ {email: _email}, {username: _username}]}, function(err, doc){
 		if (err){
 			return next(err);
 		}
-		if (doc){
+		if (doc && doc.email == _email){
 			return next("Email already taken");
+		}else if(doc && doc.username == _username){
+			return next("Username already taken");
 		}else{
+			// No doc
 			var salt = uuid();
 
 			var User = new mongo.getModel("User")({
