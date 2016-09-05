@@ -15,6 +15,15 @@ function isLoggedIn(req, res, next){
 	next();
 }
 
+// Destroy the session (log the user out) then send them to the home page
+router.get("/logout", function(req, res){
+	if (req.isAuthenticated()){
+		req.session.destroy(function(err){
+			res.redirect("/");
+		});
+	}
+});
+
 // Show the signup form for the user to fill out.
 // The actual signup logic is in the POST handler
 router.get("/signup", isLoggedIn, function(req, res){
@@ -120,17 +129,16 @@ router.post("/session/two-factor", function(req, res, next){
 router.post("/login", isLoggedIn, function(req, res){
 	var _email = req.body.email;
 	var _password = req.body.password;
-	mongo.getModel("User").findOne( {$or: [ {email: _email}, {username: _email} ]}, function(err, doc){
+	mongo.getModel("User").findOne( {email: _email}, function(err, doc){
 		if (err){
-			req.session.error = "Sorry, invalid email/username & password"
+			req.session.error = "Sorry, invalid email & password"
 			return res.redirect("/login");
 		}
 
 		if (!doc){
-			req.session.error = "No account with that email/username"
+			req.session.error = "No account with that email"
 			res.redirect("/signup");
 		}else{
-			console.log("Loggin in: " + JSON.stringify(doc));
 			if (crypto.checkPassword(doc.salt, _password, doc.password)){
 				//Success!
 
@@ -243,14 +251,12 @@ function signUp( data, next ){
 	var _email = data.email;
 	var _password = data.password;
 
-	mongo.getModel("User").findOne( {$or: [ {email: _email}, {username: _username}]}, function(err, doc){
+	mongo.getModel("User").findOne( {email: _email}, function(err, doc){
 		if (err){
 			return next(err);
 		}
-		if (doc && doc.email == _email){
+		if (doc){
 			return next("Email already taken");
-		}else if(doc && doc.username == _username){
-			return next("Username already taken");
 		}else{
 			// No doc
 			var salt = uuid();
