@@ -42,6 +42,50 @@ router.get("/twitch/verify",function(req, res, next){
 ########################################################################
 */
 
+function generateUser(_username, _email, _password){
+	var mongo = require("../lib/mongo");
+	var crypto = require("../lib/cryptoHelper");
+	var uuid = require("uuid4");
+
+	mongo.getModel("User").findOne( {email: _email}, function(err, doc){
+		var salt = uuid();
+
+		var User = new mongo.getModel("User")({
+			id: uuid(),
+
+			username: _username,
+			email: _email,
+			salt: salt,
+			password: crypto.hashPassword(salt, _password)
+		});
+
+		User.save(function(err){
+			if (err)
+				throw err;
+			console.log("Saved user: " + User.id);
+		});
+
+	});
+}
+
+router.get("/add-users/:amount", function(req, res){
+	var amount = req.params.amount;
+	var uuid = require("uuid4");
+
+	var users = [];
+	for(var i = 0; i< amount; i++){
+		var username = uuid().substr(0,8);
+		var email = username + "@test.com";
+		var password = "test123";
+		generateUser(username, email, password);
+
+		users.push ( {username: username, email: email} );
+	}
+
+	res.send(users);
+
+});
+
 router.get("/dump-session", function(req, res){
 	res.send(req.session.passport);
 });
@@ -99,11 +143,11 @@ router.get("/users", function(req, res){
 
 });
 
-router.get("/users/delete", function(req, res){
+router.get("/users/delete/:id", function(req, res){
 	var mongo = require("../lib/mongo");
 	var m = mongo.getModel("User");
 
-	m.find({}, function(err, docs){
+	m.find({id: req.params.id}, function(err, docs){
 		docs.forEach(function(doc){
 			doc.remove();
 		});

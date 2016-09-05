@@ -24,9 +24,25 @@
 
             <div class="row">
                 <div class="col-xs-12 col-sm-8 col-md-6 col-sm-offset-2 col-md-offset-3">
-                    <form id="register_form" role="form" method="post" action="">
+                    <form id="register_form" role="form" method="post" enctype="multipart/form-data" action="">
                         <h2>Please Sign Up <small>It's free and always will be.</small></h2>
                         <hr class="colorgraph">
+						<div class="form-group">
+							<!--<div class="col-xs-6 col-md-3">-->
+								<div class="thumbnail">
+									<canvas style="border:1px solid grey;" id="image_canvas" width="100" height="100"></canvas>
+
+									<input id="selectedImage" placeholder="Choose File" disabled="disabled" />
+									<div class="btn" style="clear: both;">
+									    <input name="image" id="image" type="file" accept="image/*" class="upload" />
+									</div>
+									<input type="text" name="image_old" id="base64Image" hidden />
+
+								</div>
+				      			<!--<img  height="200px" class="media-object" id="pastedImage"/>-->
+						  	<!--</div>-->
+
+						</div>
                         <div class="form-group">
                             <input data-validation="length" data-validation-length="min5" data-validation-error-msg="Your display name must be more than 5 characters" type="text" name="username" id="username" class="form-control input-lg" placeholder="Display Name" tabindex="3" required>
                         </div>
@@ -72,7 +88,7 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                            <h4 class="modal-title" id="myModalLabel">Terms & Conditions</h4>
+                            <h4 class="modal-title" id="myModalLabel">Terms &amp; Conditions</h4>
                         </div>
                         <div class="modal-body">
                             <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Similique, itaque, modi, aliquam nostrum at sapiente consequuntur natus odio reiciendis perferendis rem nisi tempore possimus ipsa porro delectus quidem dolorem ad.</p>
@@ -93,6 +109,9 @@
         <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-form-validator/2.2.8/jquery.form-validator.min.js"></script>
 
         <script>
+			var resizeCanvas = false;
+			$("#image").on("change", readImage);
+
             $.formUtils.addValidator({
                 name: "isChecked",
                 validatorFunction: function (value, $ele, config, language, $form) {
@@ -132,6 +151,57 @@
                 document.getElementById("t_and_c").checked = true;
                 document.getElementById("t_and_c_accept").className = "btn btn-success";
             }
+
+			function readImage(){
+				if (this.files && this.files[0]) {
+				    var fileReader = new FileReader();
+
+					var bSize = this.files[0].size;
+					var kbSize = bSize / 1024;
+					var mbSize = kbSize / 1024;
+					console.log(mbSize);
+					if (mbSize > 1){
+						$("#selectedImage").val("File too large (over 1MB)");
+						return;
+					}
+
+					$('#selectedImage').val(this.files[0].name); // Show user that we're reading their file
+				    fileReader.onload = function(e) {
+						//console.log("Loaded fileReader");
+						//$$('#base64Image').val (e.target.result); // Set the data we're sending to the server
+						//$$('#pastedImage').attr('src', e.target.result); //
+						drawImage(e.target.result);
+				    };
+				    fileReader.readAsDataURL( this.files[0] );
+				}
+			}
+
+			function drawImage(imageData){
+				var img = new Image;
+				var canvas = document.getElementById("image_canvas");
+				var context = canvas.getContext("2d");
+				$('#base64Image').val (imageData);
+
+				img.onload = function(){
+					if (resizeCanvas == true){
+						canvas.width = img.width;
+						canvas.height = img.height;
+						context.clearRect(0,0,canvas.width, canvas.height);
+						context.drawImage(img, 0, 0);
+					}else{
+						var hRatio = canvas.width  / img.width;
+						var vRatio =  canvas.height / img.height;
+						var ratio  = Math.min ( hRatio, vRatio );
+						var centerShift_x = ( canvas.width - img.width*ratio ) / 2;
+						var centerShift_y = ( canvas.height - img.height*ratio ) / 2;
+						context.clearRect(0,0,canvas.width, canvas.height);
+						context.drawImage(img, 0,0, img.width, img.height,
+							   centerShift_x,centerShift_y,img.width*ratio, img.height*ratio);
+					}
+				}
+
+				img.src = imageData;
+			}
         </script>
     </body>
 </html>

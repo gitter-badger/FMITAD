@@ -8,6 +8,15 @@ var uuid = require("uuid4");
 var https = require("https");
 var authenticator = require("authenticator");
 
+var multer = require('multer');
+var storage = multer.diskStorage({
+	filename: function(req, file, cb){
+		cb(null, file.fieldName+ "-" + Date.now());
+	}
+});
+var upload = multer({storage: storage});
+
+
 // Only allow user access if they're not logged in.
 function isLoggedIn(req, res, next){
 	if (req.isAuthenticated())
@@ -32,8 +41,6 @@ router.get("/signup", isLoggedIn, function(req, res){
 		e = req.session.error;
 		delete req.session.error;
 	}
-
-	console.log("error:" + e);
 	res.render("pages/auth/signup", {
 		error: e
 	});
@@ -187,7 +194,7 @@ router.post("/login", isLoggedIn, function(req, res){
 
 	If the signup function was successful then we log the user in via req.login
 */
-router.post("/signup", isLoggedIn, function(req, result){
+router.post("/signup", [isLoggedIn, upload.single("image")], function(req, result){
 	//TODO: Handler user creation
 	var key = req.body["g-recaptcha-response"];
 
@@ -203,7 +210,7 @@ router.post("/signup", isLoggedIn, function(req, result){
 					console.log("Data: " + data);
                     if (parsedData.success){
 
-						signUp(req.body, function(err, user){
+						signUp(req.body, req.file, function(err, user){
 							if (err){
 								req.session.error = err;
 								return result.redirect("/signup");
@@ -245,11 +252,26 @@ router.post("/signup", isLoggedIn, function(req, result){
 
 	When everything was done successfully then we call the "next" function with the new user object created (to allow the user to log in)
 */
-function signUp( data, next ){
+function signUp( data, file, next ){
 	//They aren't a robot.... I hope... If they are the we have reached the singularity (or we have a smart bot on our hands) :O
 	var _username = data.username;
 	var _email = data.email;
 	var _password = data.password;
+	var _image = file;
+	var _id = uuid();
+
+	var fs = require("fs");
+	var path = require("path");
+	console.log("Set image: "+ JSON.stringify(_image));
+
+	// If they post an image, upload it.
+	if (_image){
+		fs.readFile(_image.path, function(err, data){
+			var newPath = path.join(__dirname, "../", "public", "images",
+									_id + "." + file.originalname.split(".").pop());
+			fs.writeFile(newPath, data, function(err){});
+		});
+	}
 
 	mongo.getModel("User").findOne( {email: _email}, function(err, doc){
 		if (err){
@@ -262,13 +284,15 @@ function signUp( data, next ){
 			var salt = uuid();
 
 			var User = new mongo.getModel("User")({
-				id: uuid(),
+				id: _id,
 
 				username: _username,
 				email: _email,
 				salt: salt,
 				password: crypto.hashPassword(salt, _password)
 			});
+			if(_image)
+				User.profile.image = "/public/images/" + _id + "." + file.originalname.split(".").pop();
 
 			User.save(function(err){
 				if (err)

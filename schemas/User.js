@@ -11,6 +11,8 @@ var User = {
 
 	verified: Boolean, // Like twitter verified?
 
+	following: [String],
+
 	twitch: {
 		id: String,
 		username: String,
@@ -26,7 +28,9 @@ var User = {
 		//Maybe implement this at somepoint?
 		// I think it would be nice to have
 
-		status: String // Offline, Online, Invisible (Show offline to everyone except friends);
+		status: String, // Offline, Online, Invisible (Show offline to everyone except friends);
+		image: String, // image location
+		bio: {type: String}
 	},
 
 	two_factor: {

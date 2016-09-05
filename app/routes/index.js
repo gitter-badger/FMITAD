@@ -18,6 +18,41 @@ router.get("/", function(req, res){
 	res.render("pages/index", {});
 });
 
+router.get("/users", function(req, res){
+	var mongo = require("../lib/mongo");
+	var m = mongo.getModel("User");
+
+	m.find({}, null, {sort: {username: 1}}, function(err, docs){
+		if (err)
+			throw err;
+		//console.log(JSON.stringify(docs));
+		res.render("pages/users", {users: docs});
+	});
+});
+
+router.get("/following", function(req, res){
+	var mongo = require("../lib/mongo");
+	var m = mongo.getModel("User");
+
+	m.find({ id: {$in: req.user.following} }, "username id email profile", {sort: {username: 1}}, function(err, docs){
+		res.render("pages/users", {users: docs});
+	} );
+
+});
+
+router.get("/user/:id/follow", function(req, res){
+	var id = req.params.id;
+	if (id in req.user.following){
+		return res.redirect("/users");
+	}
+
+	req.user.following.push(id);
+	req.user.save(function(err){
+		res.send("Success");
+	});
+
+});
+
 router.get("/about", function(req,res){
 	res.render("pages/about");
 });

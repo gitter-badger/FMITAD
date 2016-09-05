@@ -24,8 +24,10 @@ helper(app);
 // setting up express
 app.use(express.static(path.join(__dirname, "public"))); // make sure it mounts the folders in /public
 app.use(cookieParser(process.env.SECRET || "5c5b6c82-a57d-4150-aa22-6181c4b122f8")); // use the cookie middleware
+
 app.use(bodyParser.json()); // allow us to recievv JSON data
 app.use(bodyParser.urlencoded( {extended: true} )); // I can't remember what this does.
+
 app.use(session({
 	store: new MongoStore({
 		url: mongoUtil.getSessionUri(),
