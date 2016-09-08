@@ -3,6 +3,76 @@
     <head>
 		<% title="About Us" %>
         <% include ../partials/head %>
+
+		<style>
+		#search {
+		    position: fixed;
+		    top: 0px;
+		    left: 0px;
+		    width: 100%;
+		    height: 100%;
+		    background-color: rgba(0, 0, 0, 0.7);
+
+		    -webkit-transition: all 0.5s ease-in-out;
+			-moz-transition: all 0.5s ease-in-out;
+			-o-transition: all 0.5s ease-in-out;
+			-ms-transition: all 0.5s ease-in-out;
+			transition: all 0.5s ease-in-out;
+
+		    -webkit-transform: translate(0px, -100%) scale(0, 0);
+			-moz-transform: translate(0px, -100%) scale(0, 0);
+			-o-transform: translate(0px, -100%) scale(0, 0);
+			-ms-transform: translate(0px, -100%) scale(0, 0);
+			transform: translate(0px, -100%) scale(0, 0);
+
+		    opacity: 0;
+		}
+
+		#search.open {
+			z-index: 10000;
+		    -webkit-transform: translate(0px, 0px) scale(1, 1);
+		    -moz-transform: translate(0px, 0px) scale(1, 1);
+			-o-transform: translate(0px, 0px) scale(1, 1);
+			-ms-transform: translate(0px, 0px) scale(1, 1);
+			transform: translate(0px, 0px) scale(1, 1);
+		    opacity: 1;
+		}
+
+		#search input[type="search"] {
+		    position: absolute;
+		    top: 50%;
+		    width: 100%;
+		    color: rgb(255, 255, 255);
+		    background: rgba(0, 0, 0, 0);
+		    font-size: 60px;
+		    font-weight: 300;
+		    text-align: center;
+		    border: 0px;
+		    margin: 0px auto;
+		    margin-top: -51px;
+		    padding-left: 30px;
+		    padding-right: 30px;
+		    outline: none;
+		}
+		#search .btn {
+		    position: absolute;
+		    top: 50%;
+		    left: 50%;
+		    margin-top: 61px;
+		    margin-left: -45px;
+		}
+		#search .close {
+		    position: fixed;
+		    top: 15px;
+		    right: 15px;
+		    color: #fff;
+			background-color: #428bca;
+			border-color: #357ebd;
+			opacity: 1;
+			padding: 10px 17px;
+			font-size: 27px;
+		}
+		</style>
     </head>
 
     <body>
@@ -12,31 +82,24 @@
         <!-- Page Content -->
         <div class="container">
 			<div class="jumbotron">
-				<h2>Users</h2>
-				<p>Registered Users:</p>
+				<h2>Search users.</h2>
+				<h4>You can search using their Username, Email or Id</h4>
+				<a class="btn btn-info" href="#search">Search</a>
+			</div>
+
+			<div id="search">
+			    <button type="button" class="close">×</button>
+			    <form>
+			        <input type="search" value="" placeholder="type keyword(s) here" />
+			        <button type="submit" class="btn btn-primary">Search</button>
+			    </form>
 			</div>
 
 			<div class="panel-group" id="user-panels">
-				<% for(var i=0; i < users.length; i++){ %>
-					<div class="panel panel-default">
-						<div class="panel-heading">
-							<h3 class="panel-title">
-								<a href="/user/<%= users[i].id %>"><%= users[i].username %></a>
-							</h3>
-						</div>
-						<div class="panel">
-							<div class="panel-body">
-								<% var imgSrc = users[i].profile.image ? users[i].profile.image : "http://robohash.org/" + users[i].id; %>
-								<img src="<%= imgSrc %>" width="100" height="100" />
-								<p>Id: <%= users[i].id %></p>
-								<p>Email: <%= users[i].email %></p>
-								<p>P: <%= users[i] %></p>
-							</div>
-						</div>
-					</div>
-				<% } %>
 
-				<!-- TEMPLATE FOR PANELS
+			</div>
+
+				<!--	TEMPLATE FOR PANELS
 				<div class="panel panel-default">
 					<div class="panel-heading">
 						<h3 class="panel-title">
@@ -49,9 +112,10 @@
 						</div>
 					</div>
 				</div>
-				-->
 
-			</div>
+			</div>-->
+
+
 
         </div>
         <!-- /.container -->
@@ -59,8 +123,70 @@
         <% include ../partials/footer %>
 
 		<script>
-			var id = window.location.hash.substr(1);
-			$("#" +id).collapse("show"); // If they were given the URL (e.g. /about#security ) then show the panel
+		$("a[href='#search']").on("click", function(event) {
+			event.preventDefault();
+			$("#search").addClass("open");
+			$('#search > form > input[type="search"]').focus();
+		});
+
+		$("#search, #search button.close").on("click keyup", function(event) {
+			if (event.target == this || event.target.className == 'close' || event.keyCode == 27) {
+				$(this).removeClass("open");
+			}
+		});
+
+		$('form').submit(function(event) {
+			event.preventDefault();
+
+			$("#search").removeClass("open");
+			var q = $("#search > form > input[type='search']").val();
+
+			var panelEle = $("div#user-panels");
+			panelEle.empty();
+
+			if (q.trim() == ""){
+				panelEle.append("<div class='alert alert-info' role='alert'>"
+								+ "<strong>Hey!</strong> You must enter something... This can be an email, username or id (If you have it)</div>");
+				return;
+			}
+
+			$.get("/api/search-user?q=" + encodeURIComponent(q), function(data, status){
+				if (data.length <= 0){
+					//TODO: No users found :(
+					panelEle.append("<div class='alert alert-danger' role='alert'>"
+									+ "<strong>Aw, snaps!</strong> Looks like we couldn't find anyone with \"" + q + "\"</div>");
+					return;
+				}
+
+				for(var i = 0; i < data.length; i++){
+					var d = data[i];
+					panelEle.append(createPanelHtml(d));
+				}
+
+				console.log("Success!");
+			});
+
+			return false;
+		});
+
+		function createPanelHtml (data){
+			var imgSrc = data.profile && data.profile.image ? data.profile.image : "https://robohash.org/" + data.id;
+
+			var html = "<div class='panel panel-default'>"
+					+ '<div class="panel-heading"><h3 class="panel-title">'
+					+ '<a href="/user/' + data.id + '">'+ data.username +'</a>'
+					+ '</h3></div>'
+					+ "<div class='panel'>"
+					+ '<div class="panel-body">'
+					+ "<img src='" + imgSrc +"' width='100' height='100' />"
+					+ "<p>ID: " + data.id + "</p>"
+					+ "<a class='btn btn-success' href='/user/" + data.id + "/follow'>Follow</a>"
+					+ "</div></div></div>";
+
+
+			return html;
+		}
+
 		</script>
         <!-- /.container -->
     </body>

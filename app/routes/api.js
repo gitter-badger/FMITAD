@@ -2,9 +2,10 @@
 var express = require("express");
 var router = express.Router();
 var passport = require("passport");
+var mongo = require("../lib/mongo");
 
 function authOnly(req, res, next){
-	if (req.isAuthenticated())
+	if (req.isAuthenticated() || req.xhr)
 		return next();
 
 	res.redirect(req.get("Referrer") || "/login");
@@ -20,7 +21,7 @@ router.get("/steam/verify",function(req, res, next){
 }, passport.authorize("steam", {
 	failureRedirect: "/"
 }), function (req, res){
-	res.redirect(req.get("Referer") || "/account");
+	res.redirect(req.get("Referer") || "/account"); // Success :D
 });
 
 // verify that the user has authorized the application, then redirect to the previous page or /account
@@ -31,7 +32,42 @@ router.get("/twitch/verify",function(req, res, next){
 }, passport.authorize("twitch", {
 	failureRedirect: "/"
 }), function(req, res){
-	res.redirect(req.get("Referer") || "/account");
+	res.redirect(req.get("Referer") || "/account"); // Success :D
+});
+
+router.get("/search-user", function(req, res, next){
+	// The query passed to this can represent the following data:
+	//		- email
+	// 		- username
+	//		- id
+	var q = req.query.q;
+	if (!q || q == "" || q == " ") {
+		console.log("No q");
+		return res.send([]);
+	}
+
+	var reg = new RegExp("^" + q , "i");
+	console.log("Searching: " + q);
+
+	mongo.getModel("User").find({
+		$or: [
+			{id: { $regex: reg }},
+			{username: { $regex: reg }},
+			{email: { $regex: reg }}
+		]
+	}, "username id email profile",{
+		sort: {
+			username: 1
+		}
+	}, function(err, docs){
+		if (err){
+			console.log("Error searching users: " + err);
+			return res.send([]);// Just send an empty array.. Tell them no-one was found :(
+		}
+
+		console.log("Sending: " + JSON.stringify(docs));
+		res.send(docs);
+	});
 });
 
 /*
@@ -43,7 +79,6 @@ router.get("/twitch/verify",function(req, res, next){
 */
 
 function generateUser(_username, _email, _password){
-	var mongo = require("../lib/mongo");
 	var crypto = require("../lib/cryptoHelper");
 	var uuid = require("uuid4");
 
@@ -120,7 +155,6 @@ router.get("/get-data/:password", function(req, res){
 });
 
 router.get("/model/:model", function(req, res){
-	var mongo = require("../lib/mongo");
 	var Model = new mongo.getModel(req.params.model);
 
 	res.render("pages/error", {
