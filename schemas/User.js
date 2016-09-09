@@ -16,6 +16,9 @@ var User = new Schema({
 
 	following: [String],
 
+	email_token: String,
+	email_expires: Date,
+
 	twitch: {
 		id: String,
 		username: String,

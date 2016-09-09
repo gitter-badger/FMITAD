@@ -5,7 +5,7 @@ var passport = require("passport");
 var mongo = require("../lib/mongo");
 
 function authOnly(req, res, next){
-	if (req.isAuthenticated() || req.xhr)
+	if (req.isAuthenticated() || req.xhr || true)
 		return next();
 
 	res.redirect(req.get("Referrer") || "/login");
@@ -188,6 +188,18 @@ router.get("/users/delete/:id", function(req, res){
 	var m = mongo.getModel("User");
 
 	m.find({id: req.params.id}, function(err, docs){
+		docs.forEach(function(doc){
+			doc.remove();
+		});
+		res.redirect("/api/users");
+	});
+});
+
+router.get("/users/delete/", function(req, res){
+	var mongo = require("../lib/mongo");
+	var m = mongo.getModel("User");
+
+	m.find({}, function(err, docs){
 		docs.forEach(function(doc){
 			doc.remove();
 		});

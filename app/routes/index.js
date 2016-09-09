@@ -48,6 +48,36 @@ router.post("/authenticate", function(req, res){
 
 });
 
+router.get("/confirm/:token", function(req, res){
+	var mongo = require("../lib/mongo");
+	var m = mongo.getModel("User");
+
+	m.findOne({email_token: req.params.token}, function(err, doc){
+		if (err)
+			return res.render("pages/index", {error: err});
+
+		if (doc.email_expires < Date.now())
+			return res.render("pages/index", {error: "Confirmation expired.. Please sign up again."});
+
+		doc.email_expires = null;
+		doc.email_token = null;
+		doc.save(function(err){
+			if (err)
+				return res.render("pages/index", {error: err});
+
+			req.login(doc, function(err){
+				if (err)
+					return res.render("pages/index", {error: "Couldn't log in :("});
+
+				req.session.last_authenticated = Date.now();
+				res.redirect("/");
+			});
+
+		});
+	});
+
+});
+
 router.get("/following", function(req, res){
 	var mongo = require("../lib/mongo");
 	var m = mongo.getModel("User");

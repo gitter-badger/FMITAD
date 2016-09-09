@@ -26,10 +26,9 @@
 	"passport-oauth2": "1.3.0",
 	"passport-openid": "0.4.0",
 
+	"nodemailer": "2.6.0",
 	"multer" : "1.2.0",
-
 	"authenticator": "1.1.2",
-
 	"steam-web": "0.3.0"
   }
 }

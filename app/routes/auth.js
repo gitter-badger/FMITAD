@@ -14,6 +14,16 @@ var storage = multer.diskStorage({
 		cb(null, file.fieldName+ "-" + Date.now());
 	}
 });
+
+var nodemailer = require('nodemailer');
+var transport = nodemailer.createTransport({
+	service: "SendGrid",
+	auth:{
+		user: config.email.user,
+		pass: config.email.password
+	}
+});
+
 var upload = multer({storage: storage});
 
 
@@ -147,6 +157,18 @@ router.post("/login", isLoggedIn, function(req, res){
 			req.session.error = "No account with that email"
 			res.redirect("/signup");
 		}else{
+			// If email hasn't been confirmed and the epirydate is the past (not expired)
+			if(doc.email_token){
+				if (doc.email_expires > Date.now()){
+					req.session.error = "Please confirm your email address";
+					return res.redirect("/login");
+				}else{
+					// email token has expired... Delete the account.
+					doc.remove(function(err){ console.log("Removed un-confirmed account"); });
+					return res.redirect("/signup");
+				}
+			}
+
 			if (crypto.checkPassword(doc.salt, _password, doc.password)){
 				//Success!
 
@@ -163,7 +185,7 @@ router.post("/login", isLoggedIn, function(req, res){
 				}else{
 					req.login(doc, function(err){
 						if (err)
-							throw new Error ("couldn't log in :(");
+							return res.render("pages/index", {error: "Couldn't log in :("});
 
 						req.session.last_authenticated = Date.now();
 						res.redirect("/");
@@ -218,12 +240,27 @@ router.post("/signup", [isLoggedIn, upload.single("image")], function(req, resul
 								return result.redirect("/signup");
 							}
 
-							req.login(user, function(err){
-								if (err)
-									throw new Error(err);
+							var fs = require("fs");
+							var util = require("util");
+							var path = require("path");
 
-								result.redirect("/");
+							var confirmLink = "http://localhost/confirm/" + user.email_token;
+
+							var confirmHtml = fs.readFileSync(path.join(__dirname, "../", "../", "email", "register.html"), {encoding: "utf8"});
+							var formattedHtml = util.format(confirmHtml, user.username, confirmLink, confirmLink);
+							//console.log(formattedHtml);
+
+							transport.sendMail({
+								html: formattedHtml,
+								to: user.email,
+								from: '"Support FMITAD" <support@fmitad.com>',
+								subject: "Confirmation email - FMITAD"
+							}, function(err){
+								if(err)
+									console.log("Error sending message: " +err);
 							});
+
+							result.render("pages/index", {success: "We've sent an email from support@fmitad.com to confirm your email. You have 24 hours."});
 						});
 
 					}else{
@@ -297,11 +334,20 @@ function signUp( data, file, next ){
 			if(_image)
 				User.profile.image = "/public/images/" + _id + "." + file.originalname.split(".").pop();
 
+			User.email_token = uuid();
+
+			var tmpDate = new Date();
+
+			tmpDate.setHours(tmpDate.getHours() + 24);
+			console.log(tmpDate);
+
+			User.email_expires = tmpDate; // email token expires in 24 hrs.
+
 			User.save(function(err){
 				if (err)
-					return next(err);
-				next(null, User);
-			});
+			 		return next(err);
+			 	next(null, User);
+		 	});
 		}
 	});
 };

@@ -12,6 +12,11 @@
 		"session_db" : "FMITAD-sessions"
 	},
 
+	"email":{
+		"user" : "example@gmail.com",
+		"password": "password"
+	},
+
 	"captcha_secret": "",
 
 	"twitch": {
