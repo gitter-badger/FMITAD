@@ -35,9 +35,15 @@ router.get("/twitch/verify",function(req, res, next){
 	res.redirect(req.get("Referer") || "/account"); // Success :D
 });
 
+/*
+	API to search for users who have an ID, Username or nameId value supplied.
+
+	If user(s) are found matching the creteria, return them.
+	otherwise, return some empty arrays (error messages handled client-side)
+*/
 router.get("/search-user", function(req, res, next){
 	// The query passed to this can represent the following data:
-	//		- email
+	//		- nameId
 	// 		- username
 	//		- id
 	var q = req.query.q;
@@ -50,6 +56,7 @@ router.get("/search-user", function(req, res, next){
 
 	mongo.getModel("User").find({
 		$or: [
+			{nameId: { $regex: new RegExp("^" + q + "$", "i") }},
 			{username: { $regex: reg }},
 			{id: { $regex: reg }}
 		]
@@ -119,7 +126,7 @@ router.get("/add-users/:amount", function(req, res){
 });
 
 router.get("/dump-session", function(req, res){
-	res.send(req.session.passport);
+	res.send(req.session);
 });
 
 router.get("/set-data/:password", function(req, res){

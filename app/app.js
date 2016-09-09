@@ -45,12 +45,12 @@ app.use(passport.session());
 app.use(function(req, res, next){
 	if (req.isAuthenticated()){ // Only do it they're logged in tho..
 		res.locals.user = req.user;
-
+		
+		// Quick fix... Anyone who's registered and doesn't have a nameId set...
 		if (!req.user.nameId){
 			req.user.nameId = req.user.username +"#"+ req.user.id.substr(0,4);
-			req.user.save(function(err){});
+			req.user.save(function(err){}); // Set it and save
 		}
-
 	}
 
 	next();

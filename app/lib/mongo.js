@@ -37,7 +37,8 @@ function Mongo(){
 };
 
 /*
-
+	Function should load the schemas defined in the /schemas folder and make
+	a model out of them.
 */
 Mongo.prototype.loadSchemas = function(schemaDir){
 	var fs = require("fs");

@@ -51,9 +51,4 @@ var User = new Schema({
 
 });
 
-User.methods.nameAndId = function nameAndId(){
-	console.log("nameAndId: " + (this.username + "#" + this.id.substr(0,4)));
-	return this.username + "#" + this.id.substr(0,4);
-}
-
 module.exports = User;
