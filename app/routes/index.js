@@ -30,6 +30,32 @@ router.get("/users", function(req, res){
 	});
 });
 
+/*
+	Handle authentication/reauthentication to give some extra security to accounts.
+	Only allow user's to change their passwords/security details if they have
+	authenticated within the last 5mins
+*/
+router.post("/authenticate", function(req, res){
+	if (!req.body.password){
+		// They haven't supplied a password :( Icri
+		return res.render("pages/account/re-auth");
+	}
+
+	var crypto = require("../lib/cryptoHelper");
+
+	var isCorrect = crypto.checkPassword(req.user.salt, req.body.password, req.user.password);
+	if (isCorrect){
+		req.session.last_authenticated = Date.now();
+		res.redirect("/profile"); // Send them to their profile... I don't know why.. Just do it k?
+	}else{
+		// They have entered the wrong password..
+		// Log this attempt? End session?
+		// For now.. Just tell them no
+		res.render("pages/account/re-auth");
+	}
+
+});
+
 router.get("/following", function(req, res){
 	var mongo = require("../lib/mongo");
 	var m = mongo.getModel("User");
@@ -42,6 +68,9 @@ router.get("/following", function(req, res){
 
 router.get("/user/:id/follow", function(req, res){
 	var id = req.params.id;
+	if (id == req.user.id){
+		return res.redirect("/users");
+	}
 	if (id in req.user.following){
 		return res.redirect("/users");
 	}

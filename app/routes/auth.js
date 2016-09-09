@@ -107,7 +107,8 @@ router.post("/session/two-factor", function(req, res, next){
 				throw new Error ("couldn't log in :(");
 
 			delete req.session.temp; // Delete the temp data... We don't need it now
-			console.log("Success 2fa");
+			
+			req.session.last_authenticated = Date.now();
 			res.redirect("/");
 		});
 	}else{
@@ -164,6 +165,7 @@ router.post("/login", isLoggedIn, function(req, res){
 						if (err)
 							throw new Error ("couldn't log in :(");
 
+						req.session.last_authenticated = Date.now();
 						res.redirect("/");
 					});
 				}

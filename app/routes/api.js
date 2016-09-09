@@ -109,7 +109,7 @@ router.get("/add-users/:amount", function(req, res){
 
 	var users = [];
 	for(var i = 0; i< amount; i++){
-		var username = uuid().substr(0,8);
+		var username = "test_" + uuid().substr(0,8);
 		var email = username + "@test.com";
 		var password = "test123";
 		generateUser(username, email, password);

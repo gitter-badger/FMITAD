@@ -15,11 +15,47 @@ function ensureAuth(req, res, next){
 };
 router.use(ensureAuth);
 
+/*
+	Checks to see if the user has authenticated in the last 5mins
+	if they haven't then show them the password page (should submit "password" to "/authenticate");
 
-router.get("/", function(req, res){
-	res.send("Hello :D");
+	/authenticate should refresh the "last_authenticated" variable
+
+	The page displayed to the user should depend on wether they have 2fa enabled
+	or not..
+	If they do display "enter 2fa token"
+	if they don't display "enter password"
+
+	TODO: 2FA re-authentication
+
+	Actually.. Thinking about it... The 2fa token should only be entered for
+	the login, we can be sure then the person logged in is the user so,
+	asking them to enter a new token every 5mins seems pointless...
+	Maybe we should stick with the password then?
+*/
+function shouldReAuth(req, res, next){
+	var now = Date.now();
+
+	if(req.session.last_authenticated){
+		var then = req.session.last_authenticated;
+		var diff = (now - then) / 1000;// Difference in seconds from ms
+		diff = diff / 60; // Mins
+		if (diff >= 1){
+			// Session expired.. Requires re-auth
+			return res.render("pages/account/re-auth");
+		}else{
+			return next();
+		}
+	}
+
+	// No last_authenticated... Re auth them...
+	return res.render("pages/account/re-auth");
+}
+
+
+router.get("/", shouldReAuth, function(req, res){
+	res.render("pages/account/index", {user: req.user});
 });
-
 
 //TODO: Move into something like /account/security/two-factor
 router.get("/mfa/:password", function(req, res){

@@ -54,7 +54,7 @@ app.use(function(req, res, next){
 app.use("/", require("./routes/index")); // Our "/" routes
 app.use("/", require("./routes/auth")); // Handle "/login", "/signup" and "/session/two-factor"
 app.use("/api", require("./routes/api")); // Our "/api" routes
-app.use("/account", require("./routes/account")); // Our "/account" routes
+app.use( [/*"/account",*/ "/profile"], require("./routes/account")); // Our "/account" routes
 
 // Start listening on the specified port
 server.listen(app.get("port"), function(){
