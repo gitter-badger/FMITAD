@@ -1,14 +1,17 @@
-var User = {
+var mongoose = require("mongoose"),
+	Schema = mongoose.Schema;
+
+var User = new Schema({
 
 	id : {type: String, unique: true }, //UUID4 format, allows for multiple people to have same username
 	username : {type: String, unique: false}, //Turn to true if we don't want multiple people with same username...
+	nameId: {type: String }, // {username}#{id(0,4)}
 	email : {type: String, unique: true},
 	salt: String, // Salt for hashing password with
 	password: String, // Hashed ( password + salt )
 
 	isAdmin: {type: Boolean, default: false}, // Is this user an Admin?
 	isMod: {type: Boolean, default: false}, // Is this user a Moderator?
-
 	verified: Boolean, // Like twitter verified?
 
 	following: [String],
@@ -46,6 +49,11 @@ var User = {
 		*/
 	}
 
-};
+});
+
+User.methods.nameAndId = function nameAndId(){
+	console.log("nameAndId: " + (this.username + "#" + this.id.substr(0,4)));
+	return this.username + "#" + this.id.substr(0,4);
+}
 
 module.exports = User;

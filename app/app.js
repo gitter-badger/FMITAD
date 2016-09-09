@@ -45,6 +45,12 @@ app.use(passport.session());
 app.use(function(req, res, next){
 	if (req.isAuthenticated()){ // Only do it they're logged in tho..
 		res.locals.user = req.user;
+
+		if (!req.user.nameId){
+			req.user.nameId = req.user.username +"#"+ req.user.id.substr(0,4);
+			req.user.save(function(err){});
+		}
+
 	}
 
 	next();

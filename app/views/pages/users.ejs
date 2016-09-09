@@ -90,7 +90,7 @@
 			<div id="search">
 			    <button type="button" class="close">×</button>
 			    <form>
-			        <input type="search" value="" placeholder="type keyword(s) here" />
+			        <input type="search" value="" placeholder="username or id" />
 			        <button type="submit" class="btn btn-primary">Search</button>
 			    </form>
 			</div>
@@ -174,7 +174,7 @@
 
 			var html = "<div class='panel panel-default'>"
 					+ '<div class="panel-heading"><h3 class="panel-title">'
-					+ '<a href="/user/' + data.id + '">'+ data.username +'</a>'
+					+ '<a href="/user/' + data.id + '">'+ data.nameId + '</a>'
 					+ '</h3></div>'
 					+ "<div class='panel'>"
 					+ '<div class="panel-body">'
@@ -182,8 +182,6 @@
 					+ "<p>ID: " + data.id + "</p>"
 					+ "<a class='btn btn-success' href='/user/" + data.id + "/follow'>Follow</a>"
 					+ "</div></div></div>";
-
-
 			return html;
 		}
 

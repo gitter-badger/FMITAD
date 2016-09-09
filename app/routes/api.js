@@ -47,25 +47,22 @@ router.get("/search-user", function(req, res, next){
 	}
 
 	var reg = new RegExp("^" + q , "i");
-	console.log("Searching: " + q);
 
 	mongo.getModel("User").find({
 		$or: [
-			{id: { $regex: reg }},
 			{username: { $regex: reg }},
-			{email: { $regex: reg }}
+			{id: { $regex: reg }}
 		]
-	}, "username id email profile",{
+	}, "username id nameId profile",{
 		sort: {
 			username: 1
 		}
 	}, function(err, docs){
+		var users = [];
 		if (err){
 			console.log("Error searching users: " + err);
 			return res.send([]);// Just send an empty array.. Tell them no-one was found :(
 		}
-
-		console.log("Sending: " + JSON.stringify(docs));
 		res.send(docs);
 	});
 });

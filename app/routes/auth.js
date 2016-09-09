@@ -107,7 +107,7 @@ router.post("/session/two-factor", function(req, res, next){
 				throw new Error ("couldn't log in :(");
 
 			delete req.session.temp; // Delete the temp data... We don't need it now
-			
+
 			req.session.last_authenticated = Date.now();
 			res.redirect("/");
 		});
@@ -289,6 +289,7 @@ function signUp( data, file, next ){
 				id: _id,
 
 				username: _username,
+				nameId: _username + "#" + _id.substr(0,4),
 				email: _email,
 				salt: salt,
 				password: crypto.hashPassword(salt, _password)

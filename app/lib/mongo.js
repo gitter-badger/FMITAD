@@ -52,7 +52,7 @@ Mongo.prototype.loadSchemas = function(schemaDir){
 			if (filename.split(".").pop() == "js"){
 				var modelName = filename.split(".")[filename.split(".").length - 2];
 				//console.log(modelName + " = " + filepath);
-				var s = new Schema(require(filepath));
+				var s = require(filepath);
 
 				Models[modelName] = mongoose.model(modelName,  s);
 			}

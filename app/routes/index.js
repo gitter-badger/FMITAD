@@ -19,15 +19,7 @@ router.get("/", function(req, res){
 });
 
 router.get("/users", function(req, res){
-	var mongo = require("../lib/mongo");
-	var m = mongo.getModel("User");
-
-	m.find({}, null, {sort: {username: 1}}, function(err, docs){
-		if (err)
-			throw err;
-		//console.log(JSON.stringify(docs));
-		res.render("pages/users", {users: docs});
-	});
+	res.render("pages/users");
 });
 
 /*
