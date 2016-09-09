@@ -52,6 +52,8 @@ router.get("/search-user", function(req, res, next){
 		return res.send([]);
 	}
 
+	q = q.replace(/%23/g, '#');
+
 	var reg = new RegExp("^" + q , "i");
 
 	mongo.getModel("User").find({
