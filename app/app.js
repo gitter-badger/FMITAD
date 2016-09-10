@@ -45,7 +45,7 @@ app.use(passport.session());
 app.use(function(req, res, next){
 	if (req.isAuthenticated()){ // Only do it they're logged in tho..
 		res.locals.user = req.user;
-		
+
 		// Quick fix... Anyone who's registered and doesn't have a nameId set...
 		if (!req.user.nameId){
 			req.user.nameId = req.user.username +"#"+ req.user.id.substr(0,4);
@@ -56,11 +56,14 @@ app.use(function(req, res, next){
 	next();
 });
 
+
 //Defined routes.
 app.use("/", require("./routes/index")); // Our "/" routes
 app.use("/", require("./routes/auth")); // Handle "/login", "/signup" and "/session/two-factor"
 app.use("/api", require("./routes/api")); // Our "/api" routes
 app.use( [/*"/account",*/ "/profile"], require("./routes/account")); // Our "/account" routes
+
+app.use("/dev", require("./routes/dev"));
 
 // Start listening on the specified port
 server.listen(app.get("port"), function(){
@@ -79,7 +82,6 @@ app.use(function (req, res, next) {
 // will print stacktrace
 if (app.get('env') === 'development') {
     app.use(function (err, req, res, next) {
-		console.log("Sending an error...");
         res.status(err.status || 500);
         res.render('pages/error', {
             message: err.message,

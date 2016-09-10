@@ -5,7 +5,7 @@ var passport = require("passport");
 var mongo = require("../lib/mongo");
 
 function authOnly(req, res, next){
-	if (req.isAuthenticated() || req.xhr || true)
+	if (req.isAuthenticated() || req.xhr)
 		return next();
 
 	res.redirect(req.get("Referrer") || "/login");
