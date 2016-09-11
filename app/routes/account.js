@@ -40,7 +40,7 @@ function shouldReAuth(req, res, next){
 		var then = req.session.last_authenticated;
 		var diff = (now - then) / 1000;// Difference in seconds from ms
 		diff = diff / 60; // Mins
-		if (diff >= 1){
+		if (diff >= 5){
 			// Session expired.. Requires re-auth
 			return res.render("pages/account/re-auth");
 		}else{
@@ -51,7 +51,6 @@ function shouldReAuth(req, res, next){
 	// No last_authenticated... Re auth them...
 	return res.render("pages/account/re-auth");
 }
-
 
 router.get("/", shouldReAuth, function(req, res){
 	res.render("pages/account/index", {user: req.user});

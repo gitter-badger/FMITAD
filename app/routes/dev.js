@@ -61,7 +61,7 @@ router.get("/:page", function(req, res){
 	var page = req.params.page;
 	page = page.replace(/%20/g, "/");
 	page = page.replace(/\+/g, "/");
-	
+
 	console.log(page);
 	//Some pages need data passed to them...
 	res.render("pages/" + page, data[page]);

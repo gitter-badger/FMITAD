@@ -13,22 +13,97 @@
 			<div class="well">
 			    <ul class="nav nav-tabs">
 			      <li class="active"><a href="#home" data-toggle="tab">Profile</a></li>
-			      <li><a href="#profile" data-toggle="tab">Password</a></li>
+			      <li><a href="#password-panel" data-toggle="tab">Password</a></li>
+				  <li><a href="#platform" data-toggle="tab">Platforms</a></li>
+				  <li><a href="#security" data-toggle="tab">Security</a></li>
 			    </ul>
 			    <div id="myTabContent" class="tab-content">
+
 			      <div class="tab-pane active in" id="home">
-			        <form action="/account/update-basic" method="post" id="tab">
-			            <label>Username</label>
-			            <input type="text" name="username" value="<%= user.username %>" class="input-xlarge">
-			            <label>Email</label>
-			            <input type="text" name="email" value="<%= user.email %>" class="input-xlarge">
-			          	<div>
-			        	    <button class="btn btn-primary">Update</button>
+			        <form action="/profile/update-basic" method="post" id="basic-data">
+						<div class="input-group">
+							<span class="input-group-addon" id="username-addon">Username</span>
+							<input type="text" aria-describeby="username-addon" placeholder="Username" name="username" value="<%= user.username %>" class="form-control">
+						</div>
+
+						<br/>
+
+						<div class="input-group">
+							<span class="input-group-addon" id="email-addon">Email</span>
+				            <input type="text" aria-describeby="email-addon" placeholder="Email" name="email" value="<%= user.email %>" class="form-control">
+						</div>
+						<br />
+
+			          	<div class="form-group">
+			        	    <input type="submit" value="Update" class="btn btn-primary" >
 			        	</div>
 			        </form>
 			      </div>
-			      <div class="tab-pane fade" id="profile">
-			    	<form id="tab2">
+
+				  <div class="tab-pane fade" id="password-panel">
+			    	<form action="/profile/update-password" method="post" id="password-form" >
+
+						<div class="input-group">
+							<input placeholder="Current Password" type="password" id="current_password" name="current_password" class="form-control">
+
+							<span class="input-group-btn">
+								<button onclick="togglePassword(this, 'current_password')" class="btn btn-default" type="button"><span class="glyphicon glyphicon-eye-open"></span></button>
+							</span>
+						</div>
+
+						<div class="input-group">
+				        	<input placeholder="New Password" type="password" id="new_password" name="new_password" class="form-control">
+
+							<span class="input-group-btn">
+	        					<button onclick="togglePassword(this, 'new_password')" class="btn btn-default" type="button"><span class="glyphicon glyphicon-eye-open" /></button>
+	      					</span>
+						</div>
+
+			        	<div class="input-group">
+			        	    <input type="submit" value="Update" class="btn btn-primary" >
+			        	</div>
+
+			    	</form>
+			      </div>
+
+				  <div class="tab-pane fade" id="platform">
+					  <!-- Don't need to show a form for platforms.. Just buttons to link/unlink accounts -->
+					  	<div id="steam-panel" class="panel panel-default">
+						  	<div class="panel-heading">
+					  	  		<h3 class="panel-title">Steam</h3>
+							</div>
+							<div class="panel-body">
+								<% if (user.steam && user.steam.id){ %>
+									<p>Steam ID: <%= user.steam.id %></p>
+									<p>Username: <%= user.steam.username %></p>
+									<p><a href="/api/steam/delete" class="btn btn-danger">Unlink Steam</a></p>
+								<% }else{ %>
+									<a href="/connect/steam">
+										<img src="https://steamcommunity-a.akamaihd.net/public/images/signinthroughsteam/sits_01.png" width="180" height="35" border="0">
+									</a>
+								<% } %>
+							</div>
+						</div>
+						<div id="twitch-panel" class="panel panel-default">
+						  	<div class="panel-heading">
+					  	  		<h3 class="panel-title">Twitch</h3>
+							</div>
+							<div class="panel-body">
+								<% if (user.twitch && user.twitch.id){ %>
+									<p>ID: <%= user.twitch.id %></p>
+									<p>Username: <%= user.twitch.username %></p>
+									<p><a href="/api/twitch/delete" class="btn btn-danger">Unlink Twitch</a></p>
+								<% }else{ %>
+									<a href="/connect/twitch">
+										<img src="https://camo.githubusercontent.com/f1266002daa15b9aeeb5ab511afef6aa4faffdb5/687474703a2f2f7474762d6170692e73332e616d617a6f6e6177732e636f6d2f6173736574732f636f6e6e6563745f6c696768742e706e67" alt="Connect Light" style="max-width:100%;">
+									</a>
+								<% } %>
+							</div>
+						</div>
+			      </div>
+
+				  <div class="tab-pane fade" id="security">
+			    	<form id="security">
 			        	<label>New Password</label>
 			        	<input type="password" class="input-xlarge">
 			        	<div>
@@ -37,10 +112,31 @@
 			    	</form>
 			      </div>
 			  </div>
+		  </div>
         </div>
         <!-- /.container -->
 
         <% include ../../partials/footer %>
+
+		<script>
+			function togglePassword( element, inputId ){
+				var span = element.childNodes[0];
+				if (span.classList.contains("glyphicon-eye-open")){ // Clicking on open eye should show TEXT
+
+					span.classList.remove("glyphicon-eye-open");
+					span.classList.add("glyphicon-eye-close");
+
+					$('#' + inputId).prop("type", "text");
+
+				}else if (span.classList.contains("glyphicon-eye-close")){
+					span.classList.remove("glyphicon-eye-close");
+					span.classList.add("glyphicon-eye-open");
+
+					$('#' + inputId).prop("type", "password");
+				}
+			}
+		</script>
+
         <!-- /.container -->
     </body>
 </html>

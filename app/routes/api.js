@@ -21,7 +21,7 @@ router.get("/steam/verify",function(req, res, next){
 }, passport.authorize("steam", {
 	failureRedirect: "/"
 }), function (req, res){
-	res.redirect(req.get("Referer") || "/account"); // Success :D
+	res.redirect(req.get("Referer") || "/profile"); // Success :D
 });
 
 // verify that the user has authorized the application, then redirect to the previous page or /account
@@ -32,8 +32,23 @@ router.get("/twitch/verify",function(req, res, next){
 }, passport.authorize("twitch", {
 	failureRedirect: "/"
 }), function(req, res){
-	res.redirect(req.get("Referer") || "/account"); // Success :D
+	res.redirect(req.get("Referer") || "/profile"); // Success :D
 });
+
+router.get("/steam/delete", function(req, res){
+	req.user.steam = {}; // Set it to an empty object (remove it)
+	req.user.save(function(_err){
+		return res.redirect(req.get("Referrer") || "/profile");
+	});
+});
+
+router.get("/twitch/delete", function(req, res){
+	req.user.twitch = {};
+	req.user.save(function(_err){
+		return res.redirect(req.get("Referer") || "/profile");
+	});
+});
+
 
 /*
 	API to search for users who have an ID, Username or nameId value supplied.
@@ -204,20 +219,6 @@ router.get("/users/delete/", function(req, res){
 			doc.remove();
 		});
 		res.redirect("/api/users");
-	});
-});
-
-router.get("/steam/delete", function(req, res){
-	req.user.steam = {};
-	req.user.save(function(_err){
-		res.send("Deleted steam");
-	});
-});
-
-router.get("/twitch/delete", function(req, res){
-	req.user.twitch = {};
-	req.user.save(function(_err){
-		res.send("Deleted twitch");
 	});
 });
 
