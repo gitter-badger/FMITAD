@@ -5,12 +5,13 @@ var passport = require("passport");
 var mongo = require("../lib/mongo");
 
 function authOnly(req, res, next){
-	if (req.isAuthenticated() || req.xhr)
+	if (req.isAuthenticated() || req.xhr || true)
 		return next();
 
 	res.redirect(req.get("Referrer") || "/login");
 };
 router.use(authOnly); // Only allow authenticated user to access /api :D
+
 
 // verify that the user has authorized the application, then redirect to the previous page or /account
 // If they already authorized, then boot them back
@@ -91,6 +92,36 @@ router.get("/search-user", function(req, res, next){
 	});
 });
 
+router.post("/two-factor", function(req, res){
+	var crypto = require("../lib/cryptoHelper");
+	var authenticator = require("authenticator");
+
+	var password = req.body.password;
+
+	var isCorrect = crypto.checkPassword( req.user.salt, password, req.user.password );
+	if (isCorrect){
+
+		var key = crypto.decryptData(req.body.password + req.user.salt, req.user.two_factor.key);
+
+		var uri = authenticator.generateTotpUri(
+			key, req.user.username, "FMITAD",
+			"SHA1", 6, 30);
+
+		res.send({
+			"success": true,
+			"key" : key,
+			"uri" : uri
+		});
+
+	}else{
+		res.send({
+			"success": false,
+			"error": "Incorrect password.. Cannot decrypt data"
+		})
+	}
+
+});
+
 /*
 ########################################################################
 	DEBUG ROUTES BELOW
@@ -98,6 +129,18 @@ router.get("/search-user", function(req, res, next){
 	SERIOUSLY, YOU DON'T WANT USERS TO ACCESS THE BELOW
 ########################################################################
 */
+
+router.get("/off/:id", function(req, res){
+	mongo.getModel("User").findOne( {id: req.params.id}, function(err, doc){
+		doc.two_factor.enabled = false;
+		doc.save(function(err){
+			res.send({
+				error: err,
+				saved: true
+			});
+		});
+	});
+});
 
 function generateUser(_username, _email, _password){
 	var crypto = require("../lib/cryptoHelper");

@@ -28,23 +28,50 @@ router.get("/users", function(req, res){
 	authenticated within the last 5mins
 */
 router.post("/authenticate", function(req, res){
-	if (!req.body.password){
-		// They haven't supplied a password :( Icri
+	var type = "none";
+
+	if (req.body.password && req.body.token){
+		type = "2fa"; // Supplied token and password, 2fa
+	}else if (req.body.password){ // They only supplied the password
+		type = "password";
+	}
+
+	if (type == "none"){
+		// They haven't supplied a password or token :( Icri
 		return res.render("pages/account/re-auth");
 	}
 
 	var crypto = require("../lib/cryptoHelper");
+	var authenticator = require('authenticator');
 
 	var isCorrect = crypto.checkPassword(req.user.salt, req.body.password, req.user.password);
 	if (isCorrect){
-		req.session.last_authenticated = Date.now();
-		res.redirect("/profile"); // Send them to their profile... I don't know why.. Just do it k?
+
+		if (type == "password"){
+			req.session.last_authenticated = Date.now();
+			return res.redirect(req.get("Referer") || "/profile"); // Send them to their profile... I don't know why.. Just do it k?
+		}
+
+		// TODO: 2FA
+
+		var decryptedKey = crypto.decryptData(req.body.password + req.user.salt, req.user.two_factor.key);
+		var auth = authenticator.verifyToken(decryptedKey, req.body.token);
+		if (auth){
+			//Success!
+			req.session.last_authenticated = Date.now();
+			res.redirect(req.get("Referer") || "/profile");
+		}else{
+			//Oh snap! They didn't authenticate :(
+			res.render("pages/account/re-auth");
+		}
+
 	}else{
 		// They have entered the wrong password..
 		// Log this attempt? End session?
 		// For now.. Just tell them no
 		res.render("pages/account/re-auth");
 	}
+
 
 });
 

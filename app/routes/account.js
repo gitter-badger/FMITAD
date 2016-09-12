@@ -8,6 +8,17 @@ var crypto = require("../lib/cryptoHelper");
 
 // Only allow passthrough to the next middleware if they're logged in
 function ensureAuth(req, res, next){
+	if (req.session.error){
+		res.locals.error = req.session.error;
+		delete req.session.error;
+	}
+
+	if (req.session.success){
+		res.locals.success = req.session.success;
+		delete req.session.success;
+	}
+
+
 	if (req.isAuthenticated())
 		return next();
 
@@ -53,60 +64,102 @@ function shouldReAuth(req, res, next){
 }
 
 router.get("/", shouldReAuth, function(req, res){
-	res.render("pages/account/index", {user: req.user});
+	res.render("pages/account/index");
 });
 
-//TODO: Move into something like /account/security/two-factor
-router.get("/mfa/:password", function(req, res){
-	var key = "";
-	if (req.user.two_factor.key){
-		//.. They already have a key...
-		key = req.user.two_factor.key;
-	}else{
-		key = authenticator.generateKey();
-		mongo.getModel("User").findOne({id: req.user.id}, function(err, doc){
-			doc.two_factor.key = crypto.encryptData(req.params.password + doc.salt, key);
+router.post("/update-basic", function(req, res){
+	var uname = req.body.username;
+	var email = req.body.email;
 
-			doc.two_factor.enabled = true;
-			doc.save(function(error){
-				console.log("Saved token to user's account: " + err +"_" + error);
+	if (uname != req.user.username){
+		// Update the username
+		req.user.username = uname;
+		//Username has changed.. We need to re-create their nameId
+		req.user.nameId = uname + "#" + req.user.id.substr(0,4);
+	}
+	if (email != req.user.email){
+		//Update the email
+		req.user.email = email;
+	}
+
+	req.user.save(function(err){
+		if(err){
+			req.session.error = err;
+			return res.redirect("/profile");
+		}
+
+		req.session.success = "Successfully updated username/email";
+		res.redirect("/profile");
+	});
+});
+
+router.post("/two-factor", function(req, res){
+	var password = req.body.password;
+	var enabled = req.body.enable;
+
+	var isCorrect = crypto.checkPassword( req.user.salt, password, req.user.password );
+
+	if (isCorrect){
+		var key;
+		if (req.user.two_factor.key){
+			key = req.user.two_factor.key;
+		}else{
+			key = authenticator.generateKey();
+			req.user.two_factor.key = crypto.encryptData(password + req.user.salt, key);
+
+			req.user.save(function(err){
+				if (err){
+					console.log("ERROR: COULDN'T SAVE TWO FACTOR KEY :(");
+					console.log(err);
+				}
 			});
+
+		}
+
+		req.user.two_factor.enabled = enabled;
+		req.user.save(function(err){
+			req.session.success = enabled ? "Enabled two factor authentication" : "Disabled two factor authentication";
+			return res.redirect("/profile#security");
 		});
-		// User#two_factor.key = encrypted
-	}
 
-	var uri = authenticator.generateTotpUri(
-		key, req.user.username, "FMITAD",
-		"SHA1", 6, 30);
-	console.log("genToken: " + authenticator.generateToken(key));
-	res.render("pages/account/mfa", {
-		key: key,
-		otp_uri: uri
-	});
-});
-
-router.post("/mfa/:password", function(req, res){
-	var token = req.body.token;
-	var key = crypto.decryptData(req.params.password + req.user.salt, req.user.two_factor.key);
-	console.log("Decrypted key: " + key);
-	var auth = authenticator.verifyToken(key, token);
-	var err, succ;
-
-	console.log(auth);
-	if (auth){
-		succ = "Successfully set up 2fa";
 	}else{
-		err = "Error authenticating";
+		req.session.error = "Incorrect password";
+		return res.redirect("/profile#security");
 	}
-
-	res.render("pages/account/mfa", {
-		error: err,
-		success: succ,
-		key: key,
-		otp_uri: ""
-	});
-
 });
 
+router.post("/two-factor-verify", function(req, res){
+	var token = req.body.token;
+	var password = req.body.password;
+	
+	var isCorrect = crypto.checkPassword( req.user.salt, password, req.user.password );
+
+	if(isCorrect){
+
+		var key = crypto.decryptData(password + req.user.salt, req.user.two_factor.key);
+		var auth = authenticator.verifyToken(key, token);
+		if (auth){
+			req.session.success = "You have successfully set up 2fa";
+			res.redirect("/profile#security");
+		}else{
+			req.session.error = "Sorry, that token is invalid. Please make sure your phone's time is set to automatic from network/internet. I've disabled two factor authentication for the time being.";
+
+			req.user.two_factor.enabled = false;
+			req.user.save(function(err){ console.log("Error disabling 2fa from invalid token? " + err); });
+
+			res.redirect("/profile#security");
+		}
+
+
+	}else{
+		req.session.error = "Incorrect password. Couldn't verify token. I've disabled 2fa for the time being.";
+
+		req.user.two_factor.enabled = false;
+		req.user.save(function(err){ console.log("Error disabling 2fa? " + err); });
+
+		res.redirect("/profile#security");
+	}
+
+});
 
 module.exports = router;

@@ -2,6 +2,34 @@
 <html lang="en">
     <head>
         <% include ../../partials/head %>
+
+		<style>
+			.iga-left {
+				min-width: 150px;
+				text-align: left;
+			}
+
+			span.short{
+				font-weight:bold;
+				color:#FF0000;
+				font-size:larger;
+			}
+			span.weak{
+				font-weight:bold;
+				color:orange;
+				font-size:larger;
+			}
+			span.good{
+				font-weight:bold;
+				color:#2D98F3;
+				font-size:larger;
+			}
+			span.strong{
+				font-weight:bold;
+				color: limegreen;
+				font-size:larger;
+			}
+		</style>
     </head>
 
     <body>
@@ -10,27 +38,57 @@
 
         <!-- Page Content -->
         <div class="container">
+			<% if (typeof error != 'undefined'){ %>
+				<div class="alert alert-warning alert-dismissible" role="alert">
+			  		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			  		<strong>Warning!</strong> <%= error %>
+				</div>
+            <% } %>
+            <% if (typeof notice != 'undefined'){ %>
+				<div class="alert alert-info alert-dismissible" role="alert">
+			  		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			  		<strong>Heads Up!</strong> <%= notice %>
+				</div>
+            <% } %>
+            <% if (typeof success != 'undefined'){ %>
+				<div class="alert alert-success alert-dismissible" role="alert">
+			  		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			  		<strong>Success!</strong> <%= success %>
+				</div>
+            <% } %>
+
+
 			<div class="well">
-			    <ul class="nav nav-tabs">
-			      <li class="active"><a href="#home" data-toggle="tab">Profile</a></li>
-			      <li><a href="#password-panel" data-toggle="tab">Password</a></li>
-				  <li><a href="#platform" data-toggle="tab">Platforms</a></li>
-				  <li><a href="#security" data-toggle="tab">Security</a></li>
+			    <ul id="tabs" class="nav nav-tabs" data-tabs="tabs">
+			      <li class="active"><a id="home" href="#home-tab" data-toggle="tab">Profile</a></li>
+			      <li><a id="profile-password" href="#password-tab" data-toggle="tab">Password</a></li>
+				  <li><a id="platform" href="#platform-tab" data-toggle="tab">Platforms</a></li>
+				  <li><a id="security" href="#security-tab" data-toggle="tab">Security</a></li>
 			    </ul>
+
 			    <div id="myTabContent" class="tab-content">
 
-			      <div class="tab-pane active in" id="home">
+			      <div class="tab-pane active in" id="home-tab">
 			        <form action="/profile/update-basic" method="post" id="basic-data">
+						<br/>
 						<div class="input-group">
-							<span class="input-group-addon" id="username-addon">Username</span>
-							<input type="text" aria-describeby="username-addon" placeholder="Username" name="username" value="<%= user.username %>" class="form-control">
+							<span data-tooltip="tooltip" title="Other users willsee this as your &quot;name&quot;" class="input-group-addon iga-left" id="username-addon">Username</span>
+							<input type="text" aria-describeby="username-addon" data-validation="length, alphanumeric" data-validation-length="min4"
+								placeholder="Username" name="username" value="<%= user.username %>" class="form-control">
 						</div>
 
 						<br/>
 
 						<div class="input-group">
-							<span class="input-group-addon" id="email-addon">Email</span>
+							<span data-tooltip="tooltip" title="This is the email address we can easily contact you with. This is only used to allow you to register and reset your password. You'll also use it to log into the site."
+								class="input-group-addon iga-left" id="email-addon">Email</span>
 				            <input type="text" aria-describeby="email-addon" placeholder="Email" name="email" value="<%= user.email %>" class="form-control">
+						</div>
+						<br />
+
+						<div class="input-group">
+							<span data-tooltip="tooltip" title="This is an automatically generated field. Other users can use this to find you." class="input-group-addon iga-left" id="nameid-addon">Unique Name</span>
+							<input type="text" aria-describeby="nameid-addon" placeholder="Unique Name" name="nameId" value="<%= user.nameId %>" class="form-control" disabled>
 						</div>
 						<br />
 
@@ -40,24 +98,34 @@
 			        </form>
 			      </div>
 
-				  <div class="tab-pane fade" id="password-panel">
+				  <div class="tab-pane fade" id="password-tab">
 			    	<form action="/profile/update-password" method="post" id="password-form" >
-
+						<br />
 						<div class="input-group">
-							<input placeholder="Current Password" type="password" id="current_password" name="current_password" class="form-control">
+							<span data-tooltip="tooltip" title="Please confirm your current password" class="input-group-addon iga-left" id="old-password-addon">Current Password</span>
+
+							<input aria-describeby="old-password-addon" placeholder="*******" type="password" id="current_password" name="current_password" class="form-control">
 
 							<span class="input-group-btn">
 								<button onclick="togglePassword(this, 'current_password')" class="btn btn-default" type="button"><span class="glyphicon glyphicon-eye-open"></span></button>
 							</span>
 						</div>
 
+						<br />
+
 						<div class="input-group">
-				        	<input placeholder="New Password" type="password" id="new_password" name="new_password" class="form-control">
+
+							<span data-tooltip="tooltip" title="Please confirm your current password" class="input-group-addon iga-left" id="new-password-addon">New Password</span>
+
+				        	<input aria-describeby="new-password-addon" placeholder="**********" type="password" id="new_password" name="new_password" class="form-control">
 
 							<span class="input-group-btn">
 	        					<button onclick="togglePassword(this, 'new_password')" class="btn btn-default" type="button"><span class="glyphicon glyphicon-eye-open" /></button>
 	      					</span>
 						</div>
+						<span id="new_password_result"></span>
+
+						<br/>
 
 			        	<div class="input-group">
 			        	    <input type="submit" value="Update" class="btn btn-primary" >
@@ -66,7 +134,7 @@
 			    	</form>
 			      </div>
 
-				  <div class="tab-pane fade" id="platform">
+				  <div class="tab-pane fade" id="platform-tab">
 					  <!-- Don't need to show a form for platforms.. Just buttons to link/unlink accounts -->
 					  	<div id="steam-panel" class="panel panel-default">
 						  	<div class="panel-heading">
@@ -102,23 +170,137 @@
 						</div>
 			      </div>
 
-				  <div class="tab-pane fade" id="security">
-			    	<form id="security">
-			        	<label>New Password</label>
-			        	<input type="password" class="input-xlarge">
-			        	<div>
-			        	    <button class="btn btn-primary">Update</button>
-			        	</div>
+				  <div class="tab-pane fade" id="security-tab">
+			    	<form action="/profile/two-factor" method="post" id="security">
+						<br/>
+						<div class="input-group">
+							<span data-tooltip="tooltip" title="Please confirm your current password" class="input-group-addon iga-left" id="confirm-password-addon">Confirm Password</span>
+
+							<input type="password" name="password" aria-describeby="confirm-password-addon" placeholder="********" class="form-control" required>
+						</div>
+
+						<br/>
+						<div class="input-group">
+							<input type="text" value="Enable two factor authentication" class="form-control" disabled="true">
+
+							<% if (user.two_factor.enabled) { %>
+								<!-- Show a "disable" button -->
+								<span class="input-group-addon">
+									<input type="checkbox" name="enable" checked="true">
+								</span>
+							<% }else{ %>
+								<span class="input-group-addon">
+									<input type="checkbox" name="enable">
+								</span>
+							<% } %>
+						</div>
+						<br/>
+
+						<% if (user.two_factor.enabled) { %>
+							<div class="input-group">
+								<a href="#" data-toggle="modal" data-target="#qr_modal">Show QR</a>
+							</div>
+						<% } %>
+
+						<br/>
+
+						<div class="input-group">
+							<input type="submit" class="btn btn-primary" value="Update">
+						</div>
+
 			    	</form>
 			      </div>
 			  </div>
 		  </div>
         </div>
+
+		<% if (user.two_factor.enabled) { %>
+			<div id="qr_modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="qrModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+							<h2 class="modal-title" id="qrModalLabel">Two factor authentication</h2>
+						</div>
+						<div class="modal-body">
+							<!--<hr class="colorgraph" />-->
+							<div id="qr_form">
+								<p id="qr_error"></p>
+								<div class="form-group">
+									<input type="password" name="qr_password_confirm" id="qr_password_confirm" class="form-control input-lg" placeholder="Confirm Password">
+								</div>
+								<!--<hr class="colorgraph">-->
+								<div class="row">
+									<div class="col-xs-6 col-sm-6 col-md-6">
+										<button id="qr_continue" class="btn btn-lg btn-success btn-block">Continue</button>
+									</div>
+								</div>
+							</div>
+
+
+						</div>
+					</div>
+				</div>
+			</div>
+		<% } %>
+
         <!-- /.container -->
 
         <% include ../../partials/footer %>
 
+		<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-form-validator/2.3.26/jquery.form-validator.min.js"></script>
+		<!-- Custom password-strength js file.. -->
+		<script src="/js/custom/profile.password.js"></script>
+
 		<script>
+
+			$.validate({
+				validateOnBlur: false, // Validate on form.submit()
+				errorMessagePosition : 'top'
+			});
+
+			// Make sure the user knows if their password is weak or strong..
+			$("#new_password").passwordStrength("#new_password_result");
+
+			$(document).ready(function(){
+				$("[data-tooltip='tooltip']").tooltip();
+
+				$("#tabs").tab();
+
+				var id = window.location.hash.substr(1);
+				$("#" +id).tab("show");
+
+				$("#qr_continue").click(function(e){
+					var password = $('#qr_password_confirm').val();
+
+					$.post("/api/two-factor", {password: password }, function( data, status ){
+						if(!data.success){
+							$('#qr_error').html(data.error);
+						}else{
+
+							$("#qr_form").html("<div id='otp_qr' style='width: 100%; height: 100%'></div><br/>"
+											 + "<h4>If you cannot see the QR code above enter the code below into your authenticator app</h4>"
+										 	 + "<p><span id='otp_key'></span></p><br/>"
+
+										 	 + '<form id="verify-2fa" role="form" method="post" action="/profile/two-factor-verify"><div class="form-group">'
+											 + '<label for="token">Enter the 6 didgit code you see</label>'
+								 		 	 + '<input id="token" name="token" type="text" required>'
+											 + '<input type="password" name="password" value="' + password +'" hidden >'
+								 			 + '<input type="submit" value="Verify" class="btn btn-primary"></div></form>');
+							 var qrCode = new QRCode(document.getElementById("otp_qr"),{
+ 								text: data.uri,
+ 								width: 128,
+ 								height: 128
+ 							});
+
+							$("#otp_key").html(data.key);
+
+						}
+					});
+				});
+
+			});
+
 			function togglePassword( element, inputId ){
 				var span = element.childNodes[0];
 				if (span.classList.contains("glyphicon-eye-open")){ // Clicking on open eye should show TEXT
