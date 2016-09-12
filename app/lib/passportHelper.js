@@ -24,7 +24,7 @@ module.exports = function(passport){
 					return done("Not logged in!");
 				}
 
-				mongoUtil.findOne({ 'steam.id': profile.id }, function(err, doc){
+				mongoUtil.getModel("User").findOne({ 'steam.id': profile.id }, function(err, doc){
 					if (err || doc)
 						return done( err || "Account already linked to " + doc.id); // If the account is linked
 
@@ -55,7 +55,7 @@ module.exports = function(passport){
 					return done("Not logged in!");
 				}
 
-				mongoUtil.findOne({ 'twitch.id': profile.id }, function(err, doc){
+				mongoUtil.getModel("User").findOne({ 'twitch.id': profile.id }, function(err, doc){
 					if (err || doc)
 						return done( err || "Account already linked to " + doc.id); // If the account is linked
 
