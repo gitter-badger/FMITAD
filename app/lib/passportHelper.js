@@ -13,7 +13,7 @@ module.exports = function(passport){
 	//Define passport usage
 	passport.use(new steamStrategy({
 			returnURL: config.steam.redirect_uri,
-			realm: "http://localhost/",
+			realm: config.steam.realm,
 			apiKey: config.steam.api_key,
 			passReqToCallback: true
 		},
