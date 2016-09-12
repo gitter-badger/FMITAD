@@ -34,7 +34,7 @@ module.exports = function(passport){
 					user.steam.username = profile.displayName;
 					user.save(function(_err){
 						if (_err)
-							throw _err;
+							return done( _err, null );
 						console.log("Returning : " + JSON.stringify(user));
 						return done(null, user);
 					});
@@ -68,7 +68,7 @@ module.exports = function(passport){
 
 					user.save(function(err){
 						if (err)
-							throw new Error(err);
+							return done( err, null )
 
 						done(null, user);
 					});
