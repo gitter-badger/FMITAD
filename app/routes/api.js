@@ -22,7 +22,7 @@ router.get("/steam/verify",function(req, res, next){
 }, passport.authorize("steam", {
 	failureRedirect: "/"
 }), function (req, res){
-	res.redirect(req.get("Referer") || "/profile"); // Success :D
+	res.redirect(req.get("Referer") || "/profile#platforms"); // Success :D
 });
 
 // verify that the user has authorized the application, then redirect to the previous page or /account
@@ -33,20 +33,20 @@ router.get("/twitch/verify",function(req, res, next){
 }, passport.authorize("twitch", {
 	failureRedirect: "/"
 }), function(req, res){
-	res.redirect(req.get("Referer") || "/profile"); // Success :D
+	res.redirect(req.get("Referer") || "/profile#platforms"); // Success :D
 });
 
 router.get("/steam/delete", function(req, res){
 	req.user.steam = {}; // Set it to an empty object (remove it)
 	req.user.save(function(_err){
-		return res.redirect(req.get("Referrer") || "/profile");
+		return res.redirect(req.get("Referrer") || "/profile#platforms");
 	});
 });
 
 router.get("/twitch/delete", function(req, res){
 	req.user.twitch = {};
 	req.user.save(function(_err){
-		return res.redirect(req.get("Referer") || "/profile");
+		return res.redirect(req.get("Referer") || "/profile#platforms");
 	});
 });
 
