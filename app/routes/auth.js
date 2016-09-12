@@ -276,6 +276,48 @@ router.post("/signup", [isLoggedIn, upload.single("image")], function(req, resul
 	});
 });
 
+router.post("/profile/update-basic", upload.single("image"), function(req, res){
+	var uname = req.body.username;
+	var email = req.body.email;
+
+	var _image = req.file;
+
+	var fs = require("fs");
+	var path = require("path");
+
+	if (_image){
+		// Save the image they want to upload
+		fs.readFile(_image.path, function(err, data){
+			var newPath = path.join(__dirname, "../", "public", "images",
+									req.user.id + "." + _image.originalname.split(".").pop());
+			fs.writeFile(newPath, data, function(err){});
+		});
+
+		req.user.profile.image = "/images/" + req.user.id + "." + _image.originalname.split(".").pop();
+	}
+
+	if (uname != req.user.username){
+		// Update the username
+		req.user.username = uname;
+		//Username has changed.. We need to re-create their nameId
+		req.user.nameId = uname + "#" + req.user.id.substr(0,4);
+	}
+	if (email != req.user.email){
+		//Update the email
+		req.user.email = email;
+	}
+
+	req.user.save(function(err){
+		if(err){
+			req.session.error = err;
+			return res.redirect("/profile");
+		}
+
+		req.session.success = "Successfully updated username/email/avatar";
+		res.redirect("/profile");
+	});
+});
+
 // Sign the user up!
 /*
 	This function is called from the /signup handler.
@@ -332,7 +374,7 @@ function signUp( data, file, next ){
 				password: crypto.hashPassword(salt, _password)
 			});
 			if(_image)
-				User.profile.image = "/public/images/" + _id + "." + file.originalname.split(".").pop();
+				User.profile.image = "/images/" + _id + "." + file.originalname.split(".").pop();
 
 			User.email_token = uuid();
 

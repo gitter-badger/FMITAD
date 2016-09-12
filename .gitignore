@@ -5,3 +5,5 @@ node_modules/
 config.json
 config.orig.json
 config.deployment.json
+
+app/public/images/

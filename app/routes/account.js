@@ -67,6 +67,7 @@ router.get("/", shouldReAuth, function(req, res){
 	res.render("pages/account/index");
 });
 
+/*
 router.post("/update-basic", function(req, res){
 	var uname = req.body.username;
 	var email = req.body.email;
@@ -92,6 +93,7 @@ router.post("/update-basic", function(req, res){
 		res.redirect("/profile");
 	});
 });
+*/
 
 router.post("/two-factor", function(req, res){
 	var password = req.body.password;
@@ -131,7 +133,7 @@ router.post("/two-factor", function(req, res){
 router.post("/two-factor-verify", function(req, res){
 	var token = req.body.token;
 	var password = req.body.password;
-	
+
 	var isCorrect = crypto.checkPassword( req.user.salt, password, req.user.password );
 
 	if(isCorrect){
