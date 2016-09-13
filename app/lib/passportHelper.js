@@ -60,18 +60,27 @@ module.exports = function(passport){
 						return done( err || "Account already linked to " + doc.id); // If the account is linked
 
 					var user = req.user;
-					console.log("Twitch updating (" + accesstoken + "): "+ JSON.stringify(profile));
 
-					user.twitch.token = crypto.encryptData(req.session.password + req.user.salt, accesstoken);
-					user.twitch.id = profile.id;
-					user.twitch.username = profile.username;
+					if (crypto.checkPassword(user.salt, req.session.password, user.password)){
+						console.log("Twitch updating (" + accesstoken + "): "+ JSON.stringify(profile));
 
-					user.save(function(err){
-						if (err)
-							return done( err, null )
+						user.twitch.token = crypto.encryptData(req.session.password + req.user.salt, accesstoken);
+						user.twitch.id = profile.id;
+						user.twitch.username = profile.username;
 
-						done(null, user);
-					});
+						user.save(function(err){
+							if (err)
+								return done( err, null )
+
+							done(null, user);
+						});
+					}else{
+						req.session.destroy(function(err){
+							res.render("pages/auth/login", {error: "Incorrect password stored in session.. Please log in again"});
+						});
+					}
+
+
 				});
 			});
 

@@ -10,6 +10,8 @@ var User = new Schema({
 	salt: String, // Salt for hashing password with
 	password: String, // Hashed ( password + salt )
 
+	currentEvent: String, // If they have an event started.. This will be it's ID
+
 	isAdmin: {type: Boolean, default: false}, // Is this user an Admin?
 	isMod: {type: Boolean, default: false}, // Is this user a Moderator?
 	verified: Boolean, // Like twitter verified?
@@ -53,5 +55,25 @@ var User = new Schema({
 	}
 
 });
+
+User.methods.getTokenForPlatform = function( platform, plainPassword ){
+	if (this[platform] && this[platform].token){
+		// If they have a token..
+		//Let's decrypt it
+		var crypto = require("../app/lib/cryptoHelper");
+
+		if (crypto.checkPassword( this.salt, plainPassword, this.password )){
+
+			var decrypted = crypto.decryptData(plainPassword + this.salt, this[platform].token);
+
+			return decrypted;
+		}else{
+			return null;
+		}
+
+	}else{
+		return null;
+	}
+};
 
 module.exports = User;

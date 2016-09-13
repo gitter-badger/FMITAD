@@ -172,7 +172,7 @@ router.post("/login", isLoggedIn, function(req, res){
 			if (crypto.checkPassword(doc.salt, _password, doc.password)){
 				//Success!
 
-				//TODO: Remove this line and add some "password prompts" to get password from user
+				//TODO: Remove this line and add some "password prompts" to get password from user?
 				req.session.password = _password; // Used to decrypt data..
 
 				if (doc.two_factor.enabled && true){
