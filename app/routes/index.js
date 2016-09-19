@@ -80,8 +80,14 @@ router.get("/confirm/:token", function(req, res){
 	var m = mongo.getModel("User");
 
 	m.findOne({email_token: req.params.token}, function(err, doc){
-		if (err)
-			return res.render("pages/index", {error: err});
+		if (err){
+			req.session.error = err;
+			return res.redirect("/");
+		}
+		if (!doc){
+			req.session.error = "Sorry, that token doesn't exist";
+			return res.redirect("/");
+		}
 
 		if (doc.email_expires < Date.now())
 			return res.render("pages/index", {error: "Confirmation expired.. Please sign up again."});
