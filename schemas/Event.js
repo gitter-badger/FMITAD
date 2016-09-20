@@ -6,6 +6,8 @@ var Event = new Schema({
 	id : {type: String, unique: true },
 	owner: {type: String, unique: true}, // Only allow one event per person
 
+	created_at: {type: Date, default: new Date(), index: true},
+
 	platform: String, // e.g. Steam, Origin, UPlay
 	/*
 		To check if user has the platform do

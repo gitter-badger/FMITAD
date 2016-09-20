@@ -50,6 +50,65 @@ router.get("/twitch/delete", function(req, res){
 	});
 });
 
+/*
+	Because MongoDB doesn't have an effective pagnation system, we have to
+	do some clever stuff.. We could use the .skip() function but, it's not scalable :(
+	So, let's do some stuff!!!
+
+	The field "created_at" should be index so, limiting should be relatively fast.. I hope
+
+	Example query:
+		/events/all?lastCreated={DATE}
+
+*/
+router.get("/events/all", function(req, res){
+
+	var lastCreated = req.query.lastCreated;
+
+	if (lastCreated){
+		console.log("Checking if dates are greater than " + lastCreated);
+		mongo.getModel("Event").find({ created_at: { $gt: lastCreated } }, "id owner platform type details created_at", {
+			limit: 9,
+			sort:
+				{
+					created_at: 1
+				}
+		}, function(err, events){
+			var data = {};
+			if (err)
+				data.error = err;
+
+			data.events = events;
+
+			res.send(data);
+		});
+	}else{
+
+		mongo.getModel("Event").find({ }, "id owner platform type details created_at", {
+			limit: 9,
+			sort:
+				{
+					created_at: 1
+				}
+		}, function(err, events){
+			var data = {};
+			if (err)
+				data.error = err;
+
+			data.events = events;
+
+			res.send(data);
+		});
+
+	}
+
+
+});
+
+router.get("/events/:id", function(req, res){
+
+});
+
 
 /*
 	API to search for users who have an ID, Username or nameId value supplied.
@@ -166,6 +225,51 @@ function generateUser(_username, _email, _password){
 
 	});
 }
+function randomDate(start, end) {
+    return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+}
+
+function generateEvent(){
+	var uuid = require("uuid4");
+
+	var id = uuid();
+	var owner = uuid();
+	var createdDate = randomDate(new Date(2015, 0, 1), new Date());
+	var plat = "Steam";
+	var title = "Event " + id.substr(0,4);
+	var desc = "Event for owner " + owner.substr(0,4) + " with the id of " + id.substr(0,4);
+
+	var e = new mongo.getModel("Event")({
+		id: id,
+		owner: owner,
+		created_at: createdDate,
+		platform: plat,
+
+		details: {
+			title: title,
+			description: desc
+		}
+	});
+
+
+	e.save(function(err){
+		if(err)
+			console.log("Error saving random generated event: " + err);
+	});
+
+
+}
+
+router.get("/add-events/:amount", function(req, res){
+	var amount = req.params.amount;
+
+
+	for(var i = 0; i< amount; i++){
+		generateEvent();
+	}
+
+	res.redirect("/events");
+});
 
 router.get("/add-users/:amount", function(req, res){
 	var amount = req.params.amount;
