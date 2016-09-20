@@ -39,6 +39,10 @@
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><%= user.username %> <span class="caret"></span></a>
                         <ul class="dropdown-menu">
+							<li><a href="/profile">Profile</a></li>
+							
+							<li role="separator" class="divider"></li>
+
 							<!-- This long link sends the user to Github and starts to create a new issue, giving them a template to work off (if they choose) -->
                             <li><a href="https://github.com/TGRHavoc/FMITAD/issues/new?title=Issue+from+<%= user.username %>&body=Id:+<%= user.id %>%0AComment:+Please+enter+your+issue+here">Feedback/Bug report</a></li>
                             <li><a href="#">Support</a></li>
