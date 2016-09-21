@@ -34,6 +34,12 @@ var Event = new Schema({
 
 });
 
+Event.statics.generateId = function(){
+	var uuid = require("uuid4");
+	var id = uuid().replace(/-/g, "");
+	return id.substr(0,12);
+};
+
 Event.methods.getOwner = function( cb ){
 	this.model("User").findOne({id: this.owner}, function(err, doc){
 		if (err)
@@ -53,9 +59,7 @@ Event.methods.getOwner = function( cb ){
 				username: doc.twitch.username
 			}
 		}
-
 		return cb(null, o);
-
 	});
 };
 
