@@ -13,7 +13,30 @@
         <div class="container">
 			<div class="jumbotron">
 				<h2>Events.</h2>
-				<h4>You can search using the event ID given by the Streamer or, the Streamers username.</h4>
+				<h4>You can search using the event ID given by the Streamer.</h4>
+
+				<div class="row">
+
+				</div>
+
+				<!-- If the user is logged in -->
+				<% if (typeof user != "undefined") { %>
+					<div class="row">
+
+						<% if (user.currentEvent) { %>
+							<div class="col-xs-4 col-sm-4">
+								<a href="/events/<%= user.currentEvent %>" class="btn btn-success">My event</a>
+							</div>
+						<% }else{ %>
+							<div class="col-xs-4 col-sm-4">
+								<a href="/events/create" class="btn btn-primary">Create new event</a>
+							</div>
+						<% } %>
+
+					</div>
+				<% } %>
+				<!-- End if -->
+
 			</div>
 
 			<div class="panel-group row" id="user-panels">
@@ -39,67 +62,8 @@
         <!-- /.container -->
 
         <% include ../../partials/footer %>
-
-		<script>
-		var lastCreated = "";
-		var panelEle = $("div#user-panels");
-		panelEle.empty();
-
-		$(document).ready(function(){
-			$(window).scroll(function() {
-				if ($(window).scrollTop() + $(window).height() == $(document).height() ) {
-					/*
-						TODO: When reach the bottom of the loaded page,
-						load more events.. via the /api/events end-point
-					*/
-					loadMoreEvents();
-				}
-			});
-
-
-			loadMoreEvents();
-
-		});
-
-		function loadMoreEvents() {
-			console.log("Loading events..");
-			$.get("/api/events/all?lastCreated=" + lastCreated, function(data, status){
-				console.log("Got some?: " + JSON.stringify(data));
-				if (data.events.length <= 0 || data.error){
-					alert("No events found");
-					if(data.error)
-						alert("Error:" + data.error);
-					return;
-				}
-
-				for(var i = 0; i < data.events.length; i++){
-
-					var d = data.events[i];
-					panelEle.append(getHtml(d));
-
-					if (i == data.events.length -1){
-						lastCreated = d.created_at;
-						console.log("Set last created; " + lastCreated);
-					}
-				}
-
-			} );
-		}
-
-		function getHtml( data ){
-			return '<div class="col-xs-6 col-sm-4">'
-					+ '<div class="panel panel-default">'
-					+ '<div class="panel-heading">'
-					+	'<h3 class="panel-title">' + data.details.title + '</h3></div>'
-					+ '<div class="panel-body">'
-						+ '<p>ID: ' + data.id + "</p>"
-						+ '<p>Owner: ' + data.owner + "</p>"
-						+ '<p>Platform: ' + data.platform + "</p>"
-						+ '<p>Type: ' + data.type + "</p>"
-						+ '<p>created_at: ' + data.created_at + "</p>"
-					+'</div></div></div>'
-		}
-		</script>
+		
+		<script src="/js/custom/events.js"></script>
         <!-- /.container -->
     </body>
 </html>
