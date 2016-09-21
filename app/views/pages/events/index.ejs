@@ -3,94 +3,6 @@
     <head>
 		<% title="Events" %>
         <% include ../../partials/head %>
-
-		<style>
-		#search {
-		    position: fixed;
-		    top: 0px;
-		    left: 0px;
-		    width: 100%;
-		    height: 100%;
-		    background-color: rgba(0, 0, 0, 0.7);
-
-		    -webkit-transition: all 0.5s ease-in-out;
-			-moz-transition: all 0.5s ease-in-out;
-			-o-transition: all 0.5s ease-in-out;
-			-ms-transition: all 0.5s ease-in-out;
-			transition: all 0.5s ease-in-out;
-
-		    -webkit-transform: translate(0px, -100%) scale(0, 0);
-			-moz-transform: translate(0px, -100%) scale(0, 0);
-			-o-transform: translate(0px, -100%) scale(0, 0);
-			-ms-transform: translate(0px, -100%) scale(0, 0);
-			transform: translate(0px, -100%) scale(0, 0);
-
-		    opacity: 0;
-		}
-
-		#search.open {
-			z-index: 10000;
-		    -webkit-transform: translate(0px, 0px) scale(1, 1);
-		    -moz-transform: translate(0px, 0px) scale(1, 1);
-			-o-transform: translate(0px, 0px) scale(1, 1);
-			-ms-transform: translate(0px, 0px) scale(1, 1);
-			transform: translate(0px, 0px) scale(1, 1);
-		    opacity: 1;
-		}
-
-		#search input[type="search"] {
-		    position: absolute;
-		    top: 30%;
-		    width: 100%;
-		    color: rgb(255, 255, 255);
-		    background: rgba(0, 0, 0, 0);
-		    font-size: 60px;
-		    font-weight: 300;
-		    text-align: center;
-		    border: 0px;
-		    margin: 0px auto;
-		    margin-top: -51px;
-		    padding-left: 30px;
-		    padding-right: 30px;
-		    outline: none;
-		}
-
-		#search input[name="username"] {
-		    position: absolute;
-		    top: 50%;
-		    width: 100%;
-		    color: rgb(255, 255, 255);
-		    background: rgba(0, 0, 0, 0);
-		    font-size: 60px;
-		    font-weight: 300;
-		    text-align: center;
-		    border: 0px;
-		    margin: 0px auto;
-		    margin-top: -51px;
-		    padding-left: 30px;
-		    padding-right: 30px;
-		    outline: none;
-		}
-
-		#search .btn {
-		    position: absolute;
-		    top: 50%;
-		    left: 50%;
-		    margin-top: 61px;
-		    margin-left: -45px;
-		}
-		#search .close {
-		    position: fixed;
-		    top: 15px;
-		    right: 15px;
-		    color: #fff;
-			background-color: #428bca;
-			border-color: #357ebd;
-			opacity: 1;
-			padding: 10px 17px;
-			font-size: 27px;
-		}
-		</style>
     </head>
 
     <body>
@@ -101,41 +13,48 @@
         <div class="container">
 			<div class="jumbotron">
 				<h2>Events.</h2>
-				<h4>You can search using the event ID given by the Streamer or, the Streamers username.</h4>
-				<a class="btn btn-info" href="#search">Search</a>
-			</div>
+				<h4>You can search using the event ID given by the Streamer.</h4>
 
-			<div id="search">
-			    <button type="button" class="close">×</button>
-			    <form >
+				<div class="row">
 
-					<input type="search" name="id" value="" placeholder="event id" />
-
-					<input type="search" name="username" placeholder="username" />
-
-					<button type="submit" class="btn btn-primary">Search</button>
-			    </form>
-			</div>
-
-			<div class="panel-group" id="user-panels">
-
-			</div>
-
-				<!--	TEMPLATE FOR PANELS
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<h3 class="panel-title">
-							<a data-toggle="collapse" data-parent="#about-panels" href="#MY_ID">TITLE HERE</a>
-						</h3>
-					</div>
-					<div id="MY_ID" class="panel-collapse collapse">
-						<div class="panel-body">
-
-						</div>
-					</div>
 				</div>
 
-			</div>-->
+				<!-- If the user is logged in -->
+				<% if (typeof user != "undefined") { %>
+					<div class="row">
+
+						<% if (user.currentEvent) { %>
+							<div class="col-xs-4 col-sm-4">
+								<a href="/events/<%= user.currentEvent %>" class="btn btn-success">My event</a>
+							</div>
+						<% }else{ %>
+							<div class="col-xs-4 col-sm-4">
+								<a href="/events/create" class="btn btn-primary">Create new event</a>
+							</div>
+						<% } %>
+
+					</div>
+				<% } %>
+				<!-- End if -->
+
+			</div>
+
+			<div class="panel-group row" id="user-panels">
+
+			</div>
+
+			<!--	TEMPLATE FOR PANELS
+			<div class="col-xs-6 col-sm-4">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">Graph</h3>
+					</div>
+					<div class="panel-body">
+						<img src="http://dummyimage.com/600x500/000/fff&amp;text=Graph" class="img-responsive">
+					</div>
+				</div>
+			</div>
+			-->
 
 
 
@@ -143,33 +62,8 @@
         <!-- /.container -->
 
         <% include ../../partials/footer %>
-
-		<script>
-		$("a[href='#search']").on("click", function(event) {
-			event.preventDefault();
-			$("#search").addClass("open");
-			$('#search > form > input[type="search" name="id"]').focus();
-		});
-
-		$("#search, #search button.close").on("click keyup", function(event) {
-			if (event.target == this || event.target.className == 'close' || event.keyCode == 27) {
-				$(this).removeClass("open");
-			}
-		});
-
-		$('form').submit(function(event) {
-			event.preventDefault();
-
-			$("#search").removeClass("open");
-		});
-
-		function createPanelHtml (data){
-
-			var html = ""; // TODO: Construct HTML for Events
-			return html;
-		}
-
-		</script>
+		
+		<script src="/js/custom/events.js"></script>
         <!-- /.container -->
     </body>
 </html>
