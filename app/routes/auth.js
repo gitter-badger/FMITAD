@@ -38,7 +38,7 @@ function isLoggedIn(req, res, next){
 router.get("/logout", function(req, res){
 	if (req.isAuthenticated()){
 		req.session.destroy(function(err){
-			res.redirect("/");
+			res.redirect(req.get("Referer") || "/");
 		});
 	}
 });
@@ -119,7 +119,7 @@ router.post("/session/two-factor", function(req, res, next){
 			delete req.session.temp; // Delete the temp data... We don't need it now
 
 			req.session.last_authenticated = Date.now();
-			res.redirect("/");
+			res.redirect(req.get("Referer") || "/");
 		});
 	}else{
 		// Just silently fail and redirect them to the home page
@@ -188,11 +188,11 @@ router.post("/login", isLoggedIn, function(req, res){
 							return res.render("pages/index", {error: "Couldn't log in :("});
 
 						req.session.last_authenticated = Date.now();
-						res.redirect("/");
+						res.redirect(req.get("Referer") || "/");
 					});
 				}
 			}else{
-				req.session.error = "Sorry, invalid email/username & password"
+				req.session.error = "Sorry, invalid email & password"
 				res.redirect("/login");
 			}
 		}
