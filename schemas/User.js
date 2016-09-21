@@ -56,6 +56,10 @@ var User = new Schema({
 
 });
 
+User.virtual("profileImage").get(function(){
+	return this.profile.image ? this.profile.image : "http://flathash.com/" + this.id;
+});
+
 User.methods.getTokenForPlatform = function( platform, plainPassword ){
 	if (this[platform] && this[platform].token){
 		// If they have a token..

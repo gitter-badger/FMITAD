@@ -6,6 +6,8 @@ var Event = new Schema({
 	id : {type: String, unique: true },
 	owner: {type: String, unique: true}, // Only allow one event per person
 
+	created_at: {type: Date, default: new Date(), index: true},
+
 	platform: String, // e.g. Steam, Origin, UPlay
 	/*
 		To check if user has the platform do
@@ -32,6 +34,12 @@ var Event = new Schema({
 
 });
 
+Event.statics.generateId = function(){
+	var uuid = require("uuid4");
+	var id = uuid().replace(/-/g, "");
+	return id.substr(0,12);
+};
+
 Event.methods.getOwner = function( cb ){
 	this.model("User").findOne({id: this.owner}, function(err, doc){
 		if (err)
@@ -51,9 +59,7 @@ Event.methods.getOwner = function( cb ){
 				username: doc.twitch.username
 			}
 		}
-
 		return cb(null, o);
-
 	});
 };
 
