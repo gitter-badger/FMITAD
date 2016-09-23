@@ -61,7 +61,7 @@ module.exports = function(passport){
 
 					var user = req.user;
 
-					if (crypto.checkPassword(user.salt, req.session.password, user.password)){
+					if (crypto.checkPassword(user.salt, req.session.password, user.password, user.crypto.hash )){
 						console.log("Twitch updating (" + accesstoken + "): "+ JSON.stringify(profile));
 
 						user.twitch.token = crypto.encryptData(req.session.password + req.user.salt, accesstoken);

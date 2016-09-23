@@ -7,8 +7,15 @@ var User = new Schema({
 	username : {type: String, unique: false}, //Turn to true if we don't want multiple people with same username...
 	nameId: {type: String }, // {username}#{id(0,4)}
 	email : {type: String, unique: true},
+
 	salt: String, // Salt for hashing password with
 	password: String, // Hashed ( password + salt )
+
+	// Store the current cipher and hash algorithms to easily upgrade the algos used in future..
+	crypto : {
+		hash: {type: String, default: "sha512"},
+		cipher: {type: String, default: "aes-256-cbc"}
+	},
 
 	currentEvent: String, // If they have an event started.. This will be it's ID
 
@@ -66,9 +73,9 @@ User.methods.getTokenForPlatform = function( platform, plainPassword ){
 		//Let's decrypt it
 		var crypto = require("../app/lib/cryptoHelper");
 
-		if (crypto.checkPassword( this.salt, plainPassword, this.password )){
+		if (crypto.checkPassword( this.salt, plainPassword, this.password, this.crypto.hash)){
 
-			var decrypted = crypto.decryptData(plainPassword + this.salt, this[platform].token);
+			var decrypted = crypto.decryptData(plainPassword + this.salt, this[platform].token, this.crypto.cipher );
 
 			return decrypted;
 		}else{

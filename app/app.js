@@ -43,6 +43,21 @@ app.use(passport.session());
 
 // Make sure we can access the user's data from EJS files.
 app.use(function(req, res, next){
+
+	if (req.session.error){
+		res.locals.error = req.session.error;
+		delete req.session.error;
+	}
+
+	if (req.session.success){
+		res.locals.success = req.session.success;
+		delete req.session.success;
+	}
+	if (req.session.info){
+		res.locals.info = req.session.info;
+		delete req.session.info;
+	}
+
 	if (req.isAuthenticated()){ // Only do it they're logged in tho..
 		res.locals.user = req.user;
 
