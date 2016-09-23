@@ -1,12 +1,10 @@
+			var qrCode = new QRCode(document.getElementById("otp_qr"),{
+			   width: 128,
+			   height: 128
+			});
 
 			var resizeCanvas = false;
 			$("#image").on("change", readImage);
-
-			<% if (user.profile.image ) { %>
-				drawImage("<%= user.profile.image %>");
-			<% } else { %>
-				drawImage("http://robohash.org/<%= user.id %>");
-			<% } %>
 
 			$.validate({
 				validateOnBlur: false, // Validate on form.submit()
@@ -26,14 +24,15 @@
 				$("#" +id).tab("show");
 
 				$("#qr_continue").click(function(e){
-					var password = $('#qr_password_confirm').val();
+					console.log("Clicked");
+					//var password = $('#qr_password_confirm').val();
 
-					$.post("/api/two-factor", {password: password }, function( data, status ){
+					$.post("/api/two-factor", {}, function( data, status ){
 						if(!data.success){
 							$('#qr_error').html(data.error);
 						}else{
 
-							$("#qr_form").html("<div id='otp_qr' style='width: 100%; height: 100%'></div><br/>"
+							/*$("#qr_form").html("<div id='otp_qr' style='width: 100%; height: 100%'></div><br/>"
 											 + "<h4>If you cannot see the QR code above enter the code below into your authenticator app</h4>"
 										 	 + "<p><span id='otp_key'></span></p><br/>"
 
@@ -41,14 +40,11 @@
 											 + '<label for="token">Enter the 6 didgit code you see</label>'
 								 		 	 + '<input id="token" name="token" type="text" required>'
 											 + '<input type="password" name="password" value="' + password +'" hidden >'
-								 			 + '<input type="submit" value="Verify" class="btn btn-primary"></div></form>');
-							 var qrCode = new QRCode(document.getElementById("otp_qr"),{
- 								text: data.uri,
- 								width: 128,
- 								height: 128
- 							});
-
+								 			 + '<input type="submit" value="Verify" class="btn btn-primary"></div></form>');*/
 							$("#otp_key").html(data.key);
+							
+							qrCode.clear();
+							qrCode.makeCode(data.uri);
 
 						}
 					});
