@@ -189,12 +189,13 @@ router.post("/two-factor", function(req, res){
 	var crypto = require("../lib/cryptoHelper");
 	var authenticator = require("authenticator");
 
-	var password = req.body.password;
+	var password = req.session.password;
 
-	var isCorrect = crypto.checkPassword( req.user.salt, password, req.user.password );
+	var isCorrect = crypto.checkPassword( req.user.salt, req.session.password, req.user.password, req.user.crypto.hash );
+
 	if (isCorrect){
 
-		var key = crypto.decryptData(req.body.password + req.user.salt, req.user.two_factor.key);
+		var key = crypto.decryptData(req.session.password + req.user.salt, req.user.two_factor.key, req.user.crypto.cipher );
 
 		var uri = authenticator.generateTotpUri(
 			key, req.user.username, "FMITAD",

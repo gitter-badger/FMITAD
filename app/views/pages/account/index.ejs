@@ -211,7 +211,7 @@
 
 						<% if (user.two_factor.enabled) { %>
 							<div class="input-group">
-								<a href="#" data-toggle="modal" data-target="#qr_modal">Show QR</a>
+								<a href="#" data-toggle="modal" id="qr_continue" data-target="#qr_modal">Show QR</a>
 							</div>
 						<% } %>
 
@@ -233,22 +233,35 @@
 					<div class="modal-content">
 						<div class="modal-header">
 							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-							<h2 class="modal-title" id="qrModalLabel">Two factor authentication</h2>
+
+							<h2 class="modal-title" id="qrModalLabel">If you cannot see the QR code above enter the code below into your authenticator app</h2>
+							<p><span id='otp_key'></span></p>
+
 						</div>
 						<div class="modal-body">
+
+							<div id='otp_qr' style='width: 100%; height: 100%'></div>
+							<br/>
+
+							<form id="verify-2fa" role="form" method="post" action="/profile/two-factor-verify">
+								<div class="form-group">
+									<label for="token">Enter the 6 didgit code you see</label>
+									<input id="token" name="token" type="text" required>
+									<input type="submit" value="Verify" class="btn btn-primary">
+								</div>
+							</form>
 							<!--<hr class="colorgraph" />-->
-							<div id="qr_form">
+							<!-- <div id="qr_form">
 								<p id="qr_error"></p>
 								<div class="form-group">
 									<input type="password" name="qr_password_confirm" id="qr_password_confirm" class="form-control input-lg" placeholder="Confirm Password">
 								</div>
-								<!--<hr class="colorgraph">-->
 								<div class="row">
 									<div class="col-xs-6 col-sm-6 col-md-6">
 										<button id="qr_continue" class="btn btn-lg btn-success btn-block">Continue</button>
 									</div>
 								</div>
-							</div>
+							</div>-->
 
 
 						</div>
@@ -266,6 +279,15 @@
 		<script src="/js/custom/profile.password.js"></script>
 
 		<script src="/js/custom/profile.js"></script>
+
+		<script>
+		drawImage("<%= user.profileImage %>")
+		<% if (user.profile.image ) { %>
+			//drawImage("<%= user.profile.image %>");
+		<% } else { %>
+			//drawImage("http://robohash.org/<%= user.id %>");
+		<% } %>
+		</script>
 
         <!-- /.container -->
     </body>

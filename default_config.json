@@ -12,6 +12,15 @@
 		"session_db" : "FMITAD-sessions"
 	},
 
+	"cryptography" : {
+		"hashAlgo" : "sha512",
+		"cipherAlgo" : "aes-256-cbc",
+
+		"encryptedDataArray" : [
+			"twitch.token", "two_factor.key"
+		]
+	},
+
 	"email":{
 		"user" : "example@gmail.com",
 		"password": "password"

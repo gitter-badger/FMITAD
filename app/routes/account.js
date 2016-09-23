@@ -8,17 +8,6 @@ var crypto = require("../lib/cryptoHelper");
 
 // Only allow passthrough to the next middleware if they're logged in
 function ensureAuth(req, res, next){
-	if (req.session.error){
-		res.locals.error = req.session.error;
-		delete req.session.error;
-	}
-
-	if (req.session.success){
-		res.locals.success = req.session.success;
-		delete req.session.success;
-	}
-
-
 	if (req.isAuthenticated())
 		return next();
 
@@ -67,8 +56,8 @@ router.get("/", shouldReAuth, function(req, res){
 	res.render("pages/account/index");
 });
 
-/*
-router.post("/update-basic", function(req, res){
+
+router.post("/update-basic",  function(req, res){
 	var uname = req.body.username;
 	var email = req.body.email;
 
@@ -93,13 +82,13 @@ router.post("/update-basic", function(req, res){
 		res.redirect("/profile");
 	});
 });
-*/
+
 
 router.post("/two-factor", function(req, res){
 	var password = req.body.password;
 	var enabled = req.body.enable;
 
-	var isCorrect = crypto.checkPassword( req.user.salt, password, req.user.password );
+	var isCorrect = crypto.checkPassword( req.user.salt, password, req.user.password, req.user.crypto.hash );
 
 	if (isCorrect){
 		var key;
@@ -107,7 +96,7 @@ router.post("/two-factor", function(req, res){
 			key = req.user.two_factor.key;
 		}else{
 			key = authenticator.generateKey();
-			req.user.two_factor.key = crypto.encryptData(password + req.user.salt, key);
+			req.user.two_factor.key = crypto.encryptData(password + req.user.salt, key, req.user.crypto.cipher );
 
 			req.user.save(function(err){
 				if (err){
@@ -132,16 +121,18 @@ router.post("/two-factor", function(req, res){
 
 router.post("/two-factor-verify", function(req, res){
 	var token = req.body.token;
-	var password = req.body.password;
+	var password = req.session.password;
 
-	var isCorrect = crypto.checkPassword( req.user.salt, password, req.user.password );
+	var isCorrect = crypto.checkPassword( req.user.salt, password, req.user.password, req.user.crypto.hash );
 
 	if(isCorrect){
 
-		var key = crypto.decryptData(password + req.user.salt, req.user.two_factor.key);
+		var key = crypto.decryptData(password + req.user.salt, req.user.two_factor.key, req.user.crypto.cipher);
 		var auth = authenticator.verifyToken(key, token);
+		console.log("Auth: " + key);
 		if (auth){
 			req.session.success = "You have successfully set up 2fa";
+			req.session.last_authenticated = Date.now();
 			res.redirect("/profile#security");
 		}else{
 			req.session.error = "Sorry, that token is invalid. Please make sure your phone's time is set to automatic from network/internet. I've disabled two factor authentication for the time being.";

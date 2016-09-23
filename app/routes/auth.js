@@ -105,7 +105,7 @@ router.post("/session/two-factor", function(req, res, next){
 	}
 
 	var token = req.body.token;
-	var key = crypto.decryptData(req.session.password + req.session.temp.user.salt, req.session.temp.key);
+	var key = crypto.decryptData(req.session.password + req.session.temp.user.salt, req.session.temp.key, req.session.temp.user.crypto.cipher );
 
 	console.log("Temp: "+ key);
 
@@ -169,8 +169,14 @@ router.post("/login", isLoggedIn, function(req, res){
 				}
 			}
 
-			if (crypto.checkPassword(doc.salt, _password, doc.password)){
+			console.log("Loggin in: " + JSON.stringify(doc.crypto));
+
+			if (crypto.checkPassword(doc.salt, _password, doc.password, doc.crypto.hash )){
 				//Success!
+
+				// If we've changed our crypto algorithms since the last time the user has logged in,
+				// implement the new algorithms (decrypt current data and re-encrpt)
+				crypto.implementNewAlgos(_password, doc); // The method won't run if the user's algorithms match the algorithms in config.json
 
 				//TODO: Remove this line and add some "password prompts" to get password from user?
 				req.session.password = _password; // Used to decrypt data..
@@ -362,7 +368,11 @@ function signUp( data, file, next ){
 			return next("Email already taken");
 		}else{
 			// No doc
-			var salt = uuid();
+			var salt = uuid().replace(/-/g, ""); // 32 character random string (i think it's 32)
+			var algos = crypto.getAlgorithms();
+
+			//Salt is now a string of alpha-numeric characters with a length between 16 and 32 characters
+			salt = salt.substr(0, Math.floor(Math.random() * ( (salt.length) - (salt.length/2)) + (salt.length/2) ) );
 
 			var User = new mongo.getModel("User")({
 				id: _id,
@@ -371,17 +381,18 @@ function signUp( data, file, next ){
 				nameId: _username + "#" + _id.substr(0,4),
 				email: _email,
 				salt: salt,
-				password: crypto.hashPassword(salt, _password)
+				password: crypto.hashPassword(salt, _password, algos.hash)
 			});
 			if(_image)
 				User.profile.image = "/images/" + _id + "." + file.originalname.split(".").pop();
 
-			User.email_token = uuid();
+			User.email_token = uuid().replace(/-/g, "");
+
+			User.crypto.hash = algos.hash;
+			User.crypto.cipher = algos.cipher;
 
 			var tmpDate = new Date();
-
 			tmpDate.setHours(tmpDate.getHours() + 24);
-			console.log(tmpDate);
 
 			User.email_expires = tmpDate; // email token expires in 24 hrs.
 

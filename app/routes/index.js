@@ -44,7 +44,7 @@ router.post("/authenticate", function(req, res){
 	var crypto = require("../lib/cryptoHelper");
 	var authenticator = require('authenticator');
 
-	var isCorrect = crypto.checkPassword(req.user.salt, req.body.password, req.user.password);
+	var isCorrect = crypto.checkPassword(req.user.salt, req.body.password, req.user.password, req.user.crypto.hash );
 	if (isCorrect){
 
 		if (type == "password"){
@@ -53,8 +53,7 @@ router.post("/authenticate", function(req, res){
 		}
 
 		// TODO: 2FA
-
-		var decryptedKey = crypto.decryptData(req.body.password + req.user.salt, req.user.two_factor.key);
+		var decryptedKey = crypto.decryptData(req.body.password + req.user.salt, req.user.two_factor.key, req.user.crypto.cipher );
 		var auth = authenticator.verifyToken(decryptedKey, req.body.token);
 		if (auth){
 			//Success!
