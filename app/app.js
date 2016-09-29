@@ -43,8 +43,7 @@ app.use(passport.session());
 
 // Make sure we can access the user's data from EJS files.
 app.use(function(req, res, next){
-    console.log("Worker %d is handling the request..", cluster.worker.id);
-	if (req.session.error){
+    if (req.session.error){
 		res.locals.error = req.session.error;
 		delete req.session.error;
 	}
