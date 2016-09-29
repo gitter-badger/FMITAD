@@ -8,9 +8,9 @@ var express = require("express"), // website framework
 	config = require("../config.json"); // our config file, 1 dir up
 
 var mongoUtil = require("./lib/mongo"); // Connect to the DB
+var cluster = require("cluster");
 
 var app = express();
-var server = require('http').Server(app);
 
 var passport = require("passport");
 require("./lib/passportHelper")(passport);
@@ -43,7 +43,7 @@ app.use(passport.session());
 
 // Make sure we can access the user's data from EJS files.
 app.use(function(req, res, next){
-
+    console.log("Worker %d is handling the request..", cluster.worker.id);
 	if (req.session.error){
 		res.locals.error = req.session.error;
 		delete req.session.error;
@@ -83,11 +83,6 @@ if (app.get("env") === "development"){
 	app.use("/dev", require("./routes/dev"));
 }
 
-// Start listening on the specified port
-server.listen(app.get("port"), function(){
-	console.log("Server listening on port: " + app.get("port"));
-});
-
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
     var err = new Error('Not Found');
@@ -118,3 +113,5 @@ app.use(function (err, req, res, next) {
         error: {}
     });
 });
+
+module.exports = app;
