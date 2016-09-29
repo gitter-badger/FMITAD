@@ -29,6 +29,6 @@ if (myApp.get("env") == "development"){
 }else{
     console.log("Just using one CPU");
     server.listen(myApp.get("port"), function(){
-        console.log("Cluster %d listening on port: %d", cluster.worker.id, myApp.get("port") );
+        console.log("Server listening on port: %d", myApp.get("port") );
     });
 }
