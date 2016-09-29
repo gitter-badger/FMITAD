@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./app/app.js"
+    "start": "node ./app/index.js"
   },
   "description": "A web app",
   "author": {
