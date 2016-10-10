@@ -2,13 +2,12 @@ var express = require("express"), // website framework
     cookieParser = require("cookie-parser"), // cookie helper :)
     session = require("express-session"), // sessions!!!
     helper = require("express-helpers"), // allows for extra js code in EJS files
-	path = require("path"), // allows me to do stuff with directories!
+    path = require("path"), // allows me to do stuff with directories!
     bodyParser = require("body-parser"), // parses POST and GET data into JSON format... I think
-	MongoStore = require("connect-mongo")(session),
+    MongoStore = require("connect-mongo")(session),
 	config = require("../config.json"); // our config file, 1 dir up
 
 var mongoUtil = require("./lib/mongo"); // Connect to the DB
-var cluster = require("cluster");
 
 var app = express();
 
@@ -66,7 +65,6 @@ app.use(function(req, res, next){
 			req.user.save(function(err){}); // Set it and save
 		}
 	}
-
 	next();
 });
 

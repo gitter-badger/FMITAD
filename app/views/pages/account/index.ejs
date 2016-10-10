@@ -99,9 +99,15 @@
 						</div>
 						<br />
 
-						<div class="input-group">
+                        <div class="input-group">
 							<span data-tooltip="tooltip" title="This is an automatically generated field. Other users can use this to find you." class="input-group-addon iga-left" id="nameid-addon">Unique Name</span>
 							<input type="text" aria-describeby="nameid-addon" placeholder="Unique Name" name="nameId" value="<%= user.nameId %>" class="form-control" disabled>
+						</div>
+						<br />
+
+                        <div class="input-group">
+							<span data-tooltip="tooltip" title="You can enable notifications to be sent when the website is open." class="input-group-addon iga-left" id="notif-addon">Notifications</span>
+							<input type="checkbox" aria-describeby="notif-addon" name="notif-checkbox" data-toggle="toggle" data-on="Enabled" data-off="Disabled" class="form-control" <%= user.notifications ? "checked" : "" %> >
 						</div>
 						<br />
 
@@ -196,7 +202,7 @@
 						<div class="input-group">
 							<input type="text" value="Enable two factor authentication" class="form-control" disabled="true">
 
-							<% if (user.two_factor.enabled) { %>
+							<% if ( typeof user.two_factor != "undefined" && user.two_factor.enabled) { %>
 								<!-- Show a "disable" button -->
 								<span class="input-group-addon">
 									<input type="checkbox" name="enable" checked="true">
@@ -209,7 +215,7 @@
 						</div>
 						<br/>
 
-						<% if (user.two_factor.enabled) { %>
+						<% if (typeof user.two_factor != "undefined" && user.two_factor.enabled) { %>
 							<div class="input-group">
 								<a href="#" data-toggle="modal" id="qr_continue" data-target="#qr_modal">Show QR</a>
 							</div>
@@ -227,7 +233,7 @@
 		  </div>
         </div>
 
-		<% if (user.two_factor.enabled) { %>
+		<% if (typeof user.two_factor != "undefined" && user.two_factor.enabled) { %>
 			<div id="qr_modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="qrModalLabel" aria-hidden="true">
 				<div class="modal-dialog">
 					<div class="modal-content">
@@ -277,16 +283,16 @@
 		<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-form-validator/2.3.26/jquery.form-validator.min.js"></script>
 		<!-- Custom password-strength js file.. -->
 		<script src="/js/custom/profile.password.js"></script>
-
 		<script src="/js/custom/profile.js"></script>
 
 		<script>
-		drawImage("<%= user.profileImage %>")
-		<% if (user.profile.image ) { %>
-			//drawImage("<%= user.profile.image %>");
-		<% } else { %>
-			//drawImage("http://robohash.org/<%= user.id %>");
-		<% } %>
+            drawImage("<%= user.profileImage %>");
+            <% if (typeof user.two_factor != "undefined") { %>
+            setUpQr(<%= user.two_factor.enabled %>);
+            <% } %>
+
+            window.Notif.checkPermission();
+
 		</script>
 
         <!-- /.container -->

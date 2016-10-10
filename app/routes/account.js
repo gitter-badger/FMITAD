@@ -56,34 +56,6 @@ router.get("/", shouldReAuth, function(req, res){
 	res.render("pages/account/index");
 });
 
-
-router.post("/update-basic",  function(req, res){
-	var uname = req.body.username;
-	var email = req.body.email;
-
-	if (uname != req.user.username){
-		// Update the username
-		req.user.username = uname;
-		//Username has changed.. We need to re-create their nameId
-		req.user.nameId = uname + "#" + req.user.id.substr(0,4);
-	}
-	if (email != req.user.email){
-		//Update the email
-		req.user.email = email;
-	}
-
-	req.user.save(function(err){
-		if(err){
-			req.session.error = err;
-			return res.redirect("/profile");
-		}
-
-		req.session.success = "Successfully updated username/email";
-		res.redirect("/profile");
-	});
-});
-
-
 router.post("/two-factor", function(req, res){
 	var password = req.body.password;
 	var enabled = req.body.enable;

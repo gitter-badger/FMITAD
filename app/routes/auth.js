@@ -287,6 +287,9 @@ router.post("/profile/update-basic", upload.single("image"), function(req, res){
 	var email = req.body.email;
 
 	var _image = req.file;
+    var notifs = req.body["notif-checkbox"];
+
+    console.log("Notifs: " + notifs);
 
 	var fs = require("fs");
 	var path = require("path");
@@ -312,6 +315,12 @@ router.post("/profile/update-basic", upload.single("image"), function(req, res){
 		//Update the email
 		req.user.email = email;
 	}
+
+    if (notifs === "on"){
+        req.user.notifications = true;
+    }else{
+        req.user.notifications = false;
+    }
 
 	req.user.save(function(err){
 		if(err){

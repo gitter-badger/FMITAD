@@ -11,8 +11,13 @@
     </footer>
 </div>
 
+<script src="/socket.io/socket.io.js"></script>
 <script src="/js/bootstrap.js"></script>
 <script src="/js/respond.js"></script>
 <script src="/js/holder.js"></script>
 <!-- https://github.com/alexei/sprintf.js for usage -->
 <script src="/js/sprintf.min.js"></script>
+
+<script src="/js/sockets/main.js"></script>
+<script src="/js/notifications/notifications.js"></script>
+<script> window.Notif.setPreference( <%= user.notifications %> ); </script>

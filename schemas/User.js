@@ -11,6 +11,8 @@ var User = new Schema({
 	salt: String, // Salt for hashing password with
 	password: String, // Hashed ( password + salt )
 
+    notifications: {type: Boolean, default: false},
+
 	// Store the current cipher and hash algorithms to easily upgrade the algos used in future..
 	crypto : {
 		hash: {type: String, default: "sha512"},
