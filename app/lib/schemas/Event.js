@@ -16,7 +16,6 @@ var Event = new Schema({
 			}
 	*/
 
-
 	/*
 		What type of event is this? Can anyone join?
 		Possible types:
@@ -37,11 +36,11 @@ var Event = new Schema({
 Event.statics.generateId = function(){
 	var uuid = require("uuid4");
 	var id = uuid().replace(/-/g, "");
-	return id.substr(0,12);
+	return id.substr(0,16);
 };
 
 Event.methods.getOwner = function( cb ){
-	this.model("User").findOne({id: this.owner}, function(err, doc){
+	this.model("User").findOne({id: this.owner}, "id username nameId twitch", function(err, doc){
 		if (err)
 			return cb(err);
 
@@ -49,7 +48,7 @@ Event.methods.getOwner = function( cb ){
 			return cb("No owner found with id '" + this.owner + "'");
 		}
 
-		var o = {
+		/*var o = {
 			id: doc.id,
 			username: doc.username,
 			nameId: doc.nameId,
@@ -58,8 +57,9 @@ Event.methods.getOwner = function( cb ){
 				// Used to check if User is Following/Subscribed to Owner
 				username: doc.twitch.username
 			}
-		}
-		return cb(null, o);
+		}*/
+
+		return cb( null, doc.toObject() );
 	});
 };
 
