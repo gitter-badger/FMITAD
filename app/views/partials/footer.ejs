@@ -20,4 +20,5 @@
 
 <script src="/js/sockets/main.js"></script>
 <script src="/js/notifications/notifications.js"></script>
-<script> window.Notif.setPreference( <%= user.notifications %> ); </script>
+<!-- If the user is logged in, use their preferences otherwise, just assume they don't want them -->
+<script> window.Notif.setPreference( <%= (typeof user !== "undefined") ? user.notifications : false %> ); </script>
