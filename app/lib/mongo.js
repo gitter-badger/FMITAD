@@ -32,7 +32,7 @@ function Mongo(){
 
 	//We have connected to out Database..
 	// register models etc
-	this.loadSchemas(path.join(__dirname, "../../schemas/"));
+	this.loadSchemas(path.join(__dirname, "./schemas/"));
 	console.log("Schemas loaded.");
 };
 
