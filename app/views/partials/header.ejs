@@ -40,7 +40,7 @@
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><%= user.username %> <span class="caret"></span></a>
                         <ul class="dropdown-menu">
 							<li><a href="/profile">Profile</a></li>
-							
+
 							<li role="separator" class="divider"></li>
 
 							<!-- This long link sends the user to Github and starts to create a new issue, giving them a template to work off (if they choose) -->
@@ -65,6 +65,17 @@
     </div>
     <!-- /.container -->
 </nav>
+
+<!-- Info feedback to user -->
+<% if (typeof error !== 'undefined'){ %>
+    <p class="alert alert-warning"><%= error %></p>
+<% } %>
+<% if (typeof notice !== 'undefined'){ %>
+    <p class="alert alert-info"><%= notice %></p>
+<% } %>
+<% if (typeof success !== 'undefined'){ %>
+    <p class="alert alert-success"><%= success %></p>
+<% } %>
 
 <div id="login_m" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
     <div class="modal-dialog">

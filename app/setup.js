@@ -15,13 +15,6 @@ module.exports = function ( app, express, passport ){
     app.set('view engine', 'ejs');
     helper(app);
 
-    // setting up express
-    app.use(express.static(path.join(__dirname, "public"))); // make sure it mounts the folders in /public
-    app.use(cookieParser(process.env.SECRET || "5c5b6c82-a57d-4150-aa22-6181c4b122f8")); // use the cookie middleware
-
-    app.use(bodyParser.json()); // allow us to recievv JSON data
-    app.use(bodyParser.urlencoded( {extended: true} )); // I can't remember what this does.
-
     app.use(session({
     	store: new MongoStore({
     		url: mongoUtil.getSessionUri(),
@@ -32,16 +25,24 @@ module.exports = function ( app, express, passport ){
         resave: false,
         saveUninitialized: false
     }));// Set up sessions
+
+    // setting up express
+    app.use(express.static(path.join(__dirname, "public"))); // make sure it mounts the folders in /public
+    app.use(cookieParser(process.env.SECRET || "5c5b6c82-a57d-4150-aa22-6181c4b122f8")); // use the cookie middleware
+
+    app.use(bodyParser.json()); // allow us to recievv JSON data
+    app.use(bodyParser.urlencoded( {extended: true} )); // I can't remember what this does.
+
     app.use(passport.initialize());
     app.use(passport.session());
 
     // Make sure we can access the user's data from EJS files.
     app.use(function(req, res, next){
+
         if (req.session.error){
     		res.locals.error = req.session.error;
     		delete req.session.error;
     	}
-
     	if (req.session.success){
     		res.locals.success = req.session.success;
     		delete req.session.success;
@@ -62,5 +63,6 @@ module.exports = function ( app, express, passport ){
     	}
     	next();
     });
+
     //Phew! The app is set up now
 };

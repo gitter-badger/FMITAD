@@ -46,28 +46,14 @@ router.get("/logout", function(req, res){
 // Show the signup form for the user to fill out.
 // The actual signup logic is in the POST handler
 router.get("/signup", isLoggedIn, function(req, res){
-	var e;
-	if (req.session.error){
-		e = req.session.error;
-		delete req.session.error;
-	}
-	res.render("pages/auth/signup", {
-		error: e
-	});
+	res.render("pages/auth/signup");
 });
 
 // Show the login form for the user to fill out
 // Actual logic is in the POST handler
 router.get("/login", isLoggedIn, function(req, res){
-	var e;
-	if (req.session.error){
-		e = req.session.error;
-		delete req.session.error;
-	}
-
-	res.render("pages/auth/login", {
-		error: e
-	});
+    console.log("Login locals: " + JSON.stringify(res.locals));
+	res.render("pages/auth/login");
 });
 
 // Show the form for  the user to enter their token

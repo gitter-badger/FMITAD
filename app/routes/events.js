@@ -8,7 +8,12 @@ router.get("/", function(req, res){
 
 router.get("/create", function(req, res){
 	req.session.error = "Sorry, that's not implemented yet :'(";
-	res.redirect("/events");
+    res.redirect("/events");
+});
+
+router.post("/create", function(req, res){
+    req.session.error = "Sorry, that's not implemented yet :'(";
+    res.redirect("/events");
 });
 
 router.get("/:id", function(req, res){
