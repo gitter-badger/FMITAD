@@ -69,7 +69,7 @@ util.inherits(Strategy, OAuth2Strategy);
  * @api protected
  */
 Strategy.prototype.userProfile = function(accessToken, done) {
-	console.log("UserProfile: " + accessToken);
+    console.log("UserProfile: " + accessToken);
     this._oauth2.get("https://api.twitch.tv/kraken/user", accessToken, function (err, body, res) {
         if (err) { return done(new InternalOAuthError("failed to fetch user profile", err)); }
 

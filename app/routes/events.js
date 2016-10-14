@@ -3,11 +3,11 @@ var express = require("express");
 var router = express.Router();
 
 router.get("/", function(req, res){
-	res.render("pages/events/index");
+    res.render("pages/events/index");
 });
 
 router.get("/create", function(req, res){
-	req.session.error = "Sorry, that's not implemented yet :'(";
+    req.session.error = "Sorry, that's not implemented yet :'(";
     res.redirect("/events");
 });
 
@@ -17,8 +17,8 @@ router.post("/create", function(req, res){
 });
 
 router.get("/:id", function(req, res){
-	req.session.error = "Sorry, that's not implemented yet :'(";
-	res.redirect("/events");
+    req.session.error = "Sorry, that's not implemented yet :'(";
+    res.redirect("/events");
 });
 
 

@@ -1,40 +1,33 @@
 var Analytics = {};
-var data = {};
 
-Analytics.calculateStuff = function(){
+Analytics.calculateStuff = function( connected ){
     return {
-        browsers: calcBrowsers(),
-        operatingSystems: calcOses(),
-        pages: calcPages(),
-        referrers: calcRefs(),
-        totalUsers: getActiveUsers()
+        browsers: calcBrowsers(connected),
+        operatingSystems: calcOses(connected),
+        pages: calcPages(connected),
+        referrers: calcRefs(connected),
+        totalUsers: getActiveUsers(connected)
     };
 };
 
-Analytics.initUser = function( socketID, agent ){
-    data[socketID] = {
-        agent: agent
-    };
+Analytics.initUser = function( client, agent ){
+    client.agent = agent;
 };
 
-Analytics.pageView = function( socketID, ref, loc){
-    data[socketID].referer = ref;
-    data[socketID].location = loc;
+Analytics.pageView = function( client, ref, loc){
+    client.referer = ref;
+    client.location = loc;
 };
 
-Analytics.disconnect = function( socketID ){
-    delete data[socketID];
-};
-
-function getActiveUsers(){
-    return Object.keys(Analytics).length;
+function getActiveUsers( connected ){
+    return Object.keys(connected).length;
 }
 
-function calcBrowsers(){
+function calcBrowsers( connected ){
     var browsers = {};
 
-    for(var key in Analytics){
-        var browser = Analytics[key].agent.browser;
+    for(var key in connected ){
+        var browser = connected[key].agent.browser;
         if (browser in browsers)
             browsers[browser] ++;
         else
@@ -44,11 +37,11 @@ function calcBrowsers(){
     return browsers;
 }
 
-function calcOses(){
+function calcOses( connected ){
     var oses = {};
 
-    for(var key in Analytics){
-        var os = Analytics[key].agent.os;
+    for(var key in connected ){
+        var os = connected[key].agent.os;
         if (os in oses)
             oses[os] ++;
         else
@@ -57,11 +50,11 @@ function calcOses(){
     return oses;
 }
 
-function calcPages(){
+function calcPages( connected ){
     var pages = {};
 
-    for(var key in Analytics){
-        var page = Analytics[key].location;
+    for(var key in connected){
+        var page = connected[key].location;
         if (page in pages)
             pages[page] ++;
         else
@@ -70,11 +63,11 @@ function calcPages(){
     return pages;
 }
 
-function calcRefs(){
+function calcRefs( connected ){
     var referers = {};
 
-    for(var key in Analytics){
-        var ref = Analytics[key].referer || "(direct)";
+    for(var key in connected){
+        var ref = connected[key].referer || "(direct)";
         if (ref in referers)
             referers[ref] ++;
         else

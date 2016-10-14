@@ -4,7 +4,6 @@ var passport = require("passport");
 var app = express();
 
 require("./setup.js")(app, express, passport);
-
 require("./lib/passportHelper")(passport);
 
 //Defined routes.
@@ -15,7 +14,7 @@ app.use( [/*"/account",*/ "/profile"], require("./routes/account")); // Our "/ac
 app.use("/events", require("./routes/events"));
 
 if (app.get("env") === "development"){
-	app.use("/dev", require("./routes/dev"));
+    app.use("/dev", require("./routes/dev"));
 }
 
 // catch 404 and forward to error handler
@@ -41,7 +40,7 @@ if (app.get('env') === 'development') {
 // production error handler
 // no stacktraces leaked to user
 app.use(function (err, req, res, next) {
-	console.log("Sending an error...");
+    console.log("Sending an error...");
     res.status(err.status || 500);
     res.render('pages/error', {
         message: err.message,
