@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-		<% title="Events" %>
+        <% title="Events" %>
         <% include ../../partials/head %>
     </head>
 
@@ -11,50 +11,50 @@
 
         <!-- Page Content -->
         <div class="container">
-			<div class="jumbotron">
-				<h2>Events.</h2>
-				<h4>You can search using the event ID given by the Streamer.</h4>
+            <div class="jumbotron">
+                <h2>Events.</h2>
+                <h4>You can search using the event ID given by the Streamer.</h4>
 
-				<div class="row">
+                <div class="row">
 
-				</div>
+                </div>
 
-				<!-- If the user is logged in -->
-				<% if (typeof user != "undefined") { %>
-					<div class="row">
+                <!-- If the user is logged in -->
+                <% if (typeof user != "undefined") { %>
+                    <div class="row">
 
-						<% if (user.currentEvent) { %>
-							<div class="col-xs-4 col-sm-4">
-								<a href="/events/<%= user.currentEvent %>" class="btn btn-success">My event</a>
-							</div>
-						<% }else{ %>
-							<div class="col-xs-4 col-sm-4">
-								<a href="/events/create" class="btn btn-primary">Create new event</a>
-							</div>
-						<% } %>
+                        <% if (user.currentEvent) { %>
+                            <div class="col-xs-4 col-sm-4">
+                                <a href="/events/<%= user.currentEvent %>" class="btn btn-success">My event</a>
+                            </div>
+                        <% }else{ %>
+                            <div class="col-xs-4 col-sm-4">
+                                <a href="/events/create" class="btn btn-primary">Create new event</a>
+                            </div>
+                        <% } %>
 
-					</div>
-				<% } %>
-				<!-- End if -->
+                    </div>
+                <% } %>
+                <!-- End if -->
 
-			</div>
+            </div>
 
-			<div class="panel-group row" id="user-panels">
+            <div class="panel-group row" id="user-panels">
 
-			</div>
+            </div>
 
-			<!--	TEMPLATE FOR PANELS
-			<div class="col-xs-6 col-sm-4">
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<h3 class="panel-title">Graph</h3>
-					</div>
-					<div class="panel-body">
-						<img src="http://dummyimage.com/600x500/000/fff&amp;text=Graph" class="img-responsive">
-					</div>
-				</div>
-			</div>
-			-->
+            <!--	TEMPLATE FOR PANELS
+            <div class="col-xs-6 col-sm-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Graph</h3>
+                    </div>
+                    <div class="panel-body">
+                        <img src="http://dummyimage.com/600x500/000/fff&amp;text=Graph" class="img-responsive">
+                    </div>
+                </div>
+            </div>
+            -->
 
 
 
@@ -63,7 +63,7 @@
 
         <% include ../../partials/footer %>
 
-		<script src="/js/custom/pages/events.js"></script>
+        <script src="/js/custom/pages/events.js"></script>
         <!-- /.container -->
     </body>
 </html>

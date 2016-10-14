@@ -5,8 +5,8 @@ var clients = {};
 
 function Helper ( io ){
     if (!(this instanceof Helper)){
-		return new Helper(io);
-	}
+        return new Helper(io);
+    }
 
     io.on("connection", function(socket){
         console.log("User has connected: " + socket.id);
@@ -26,7 +26,7 @@ function Helper ( io ){
 };
 
 Helper.sendNotification = function( socketId, notfication ){
-    clients[socketId].socket.emit("notification", notification);    
+    clients[socketId].socket.emit("notification", notification);
 };
 
 module.exports = Helper;
