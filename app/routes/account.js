@@ -114,7 +114,7 @@ router.post("/two-factor-verify", function(req, res){
 
 			res.redirect("/profile#security");
 		}
-        
+
 	}else{
 		req.session.error = "Incorrect password. Couldn't verify token. I've disabled 2fa for the time being.";
 

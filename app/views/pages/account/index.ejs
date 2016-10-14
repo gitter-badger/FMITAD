@@ -3,33 +3,33 @@
     <head>
         <% include ../../partials/head %>
 
-		<style>
-			.iga-left {
-				min-width: 150px;
-				text-align: left;
-			}
+        <style>
+            .iga-left {
+                min-width: 150px;
+                text-align: left;
+            }
 
-			span.short{
-				font-weight:bold;
-				color:#FF0000;
-				font-size:larger;
-			}
-			span.weak{
-				font-weight:bold;
-				color:orange;
-				font-size:larger;
-			}
-			span.good{
-				font-weight:bold;
-				color:#2D98F3;
-				font-size:larger;
-			}
-			span.strong{
-				font-weight:bold;
-				color: limegreen;
-				font-size:larger;
-			}
-		</style>
+            span.short{
+                font-weight:bold;
+                color:#FF0000;
+                font-size:larger;
+            }
+            span.weak{
+                font-weight:bold;
+                color:orange;
+                font-size:larger;
+            }
+            span.good{
+                font-weight:bold;
+                color:#2D98F3;
+                font-size:larger;
+            }
+            span.strong{
+                font-weight:bold;
+                color: limegreen;
+                font-size:larger;
+            }
+        </style>
     </head>
 
     <body>
@@ -38,254 +38,235 @@
 
         <!-- Page Content -->
         <div class="container">
-			<% if (typeof error != 'undefined'){ %>
-				<div class="alert alert-warning alert-dismissible" role="alert">
-			  		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-			  		<strong>Warning!</strong> <%= error %>
-				</div>
-            <% } %>
-            <% if (typeof notice != 'undefined'){ %>
-				<div class="alert alert-info alert-dismissible" role="alert">
-			  		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-			  		<strong>Heads Up!</strong> <%= notice %>
-				</div>
-            <% } %>
-            <% if (typeof success != 'undefined'){ %>
-				<div class="alert alert-success alert-dismissible" role="alert">
-			  		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-			  		<strong>Success!</strong> <%= success %>
-				</div>
-            <% } %>
 
+            <div class="well">
+                <ul id="tabs" class="nav nav-tabs" data-tabs="tabs">
+                  <li class="active"><a id="home" href="#home-tab" data-toggle="tab">Profile</a></li>
+                  <li><a id="profile-password" href="#password-tab" data-toggle="tab">Password</a></li>
+                  <li><a id="platform" href="#platform-tab" data-toggle="tab">Platforms</a></li>
+                  <li><a id="security" href="#security-tab" data-toggle="tab">Security</a></li>
+                </ul>
 
-			<div class="well">
-			    <ul id="tabs" class="nav nav-tabs" data-tabs="tabs">
-			      <li class="active"><a id="home" href="#home-tab" data-toggle="tab">Profile</a></li>
-			      <li><a id="profile-password" href="#password-tab" data-toggle="tab">Password</a></li>
-				  <li><a id="platform" href="#platform-tab" data-toggle="tab">Platforms</a></li>
-				  <li><a id="security" href="#security-tab" data-toggle="tab">Security</a></li>
-			    </ul>
+                <div id="myTabContent" class="tab-content">
 
-			    <div id="myTabContent" class="tab-content">
+                  <div class="tab-pane active in" id="home-tab">
+                    <form action="/profile/update-basic" method="post" enctype="multipart/form-data" id="basic-data">
+                        <br/>
 
-			      <div class="tab-pane active in" id="home-tab">
-			        <form action="/profile/update-basic" method="post" enctype="multipart/form-data" id="basic-data">
-						<br/>
+                        <div class="thumbnail">
+                            <canvas style="border:1px solid grey;" id="image_canvas" width="100" height="100"></canvas>
 
-						<div class="thumbnail">
-							<canvas style="border:1px solid grey;" id="image_canvas" width="100" height="100"></canvas>
+                            <input id="selectedImage" placeholder="Choose File" disabled="disabled" />
+                            <div class="btn" style="clear: both;">
+                                <input name="image" id="image" type="file" accept="image/*" class="upload" />
+                            </div>
+                            <input type="text" name="image_old" id="base64Image" hidden />
 
-							<input id="selectedImage" placeholder="Choose File" disabled="disabled" />
-							<div class="btn" style="clear: both;">
-								<input name="image" id="image" type="file" accept="image/*" class="upload" />
-							</div>
-							<input type="text" name="image_old" id="base64Image" hidden />
+                        </div>
 
-						</div>
+                        <br/>
+                        <div class="input-group">
+                            <span data-tooltip="tooltip" title="Other users will see this as your &quot;name&quot;" class="input-group-addon iga-left" id="username-addon">Username</span>
+                            <input type="text" aria-describeby="username-addon" data-validation="length, alphanumeric" data-validation-length="min4"
+                                placeholder="Username" name="username" value="<%= user.username %>" class="form-control">
+                        </div>
 
-						<br/>
-						<div class="input-group">
-							<span data-tooltip="tooltip" title="Other users will see this as your &quot;name&quot;" class="input-group-addon iga-left" id="username-addon">Username</span>
-							<input type="text" aria-describeby="username-addon" data-validation="length, alphanumeric" data-validation-length="min4"
-								placeholder="Username" name="username" value="<%= user.username %>" class="form-control">
-						</div>
-
-						<br/>
-
-						<div class="input-group">
-							<span data-tooltip="tooltip" title="This is the email address we can easily contact you with. This is only used to allow you to register and reset your password. You'll also use it to log into the site."
-								class="input-group-addon iga-left" id="email-addon">Email</span>
-				            <input type="text" aria-describeby="email-addon" placeholder="Email" name="email" value="<%= user.email %>" class="form-control">
-						</div>
-						<br />
+                        <br/>
 
                         <div class="input-group">
-							<span data-tooltip="tooltip" title="This is an automatically generated field. Other users can use this to find you." class="input-group-addon iga-left" id="nameid-addon">Unique Name</span>
-							<input type="text" aria-describeby="nameid-addon" placeholder="Unique Name" name="nameId" value="<%= user.nameId %>" class="form-control" disabled>
-						</div>
-						<br />
+                            <span data-tooltip="tooltip" title="This is the email address we can easily contact you with. This is only used to allow you to register and reset your password. You'll also use it to log into the site."
+                                class="input-group-addon iga-left" id="email-addon">Email</span>
+                            <input type="text" aria-describeby="email-addon" placeholder="Email" name="email" value="<%= user.email %>" class="form-control">
+                        </div>
+                        <br />
 
                         <div class="input-group">
-							<span data-tooltip="tooltip" title="You can enable notifications to be sent when the website is open." class="input-group-addon iga-left" id="notif-addon">Notifications</span>
-							<input type="checkbox" aria-describeby="notif-addon" name="notif-checkbox" data-toggle="toggle" data-on="Enabled" data-off="Disabled" class="form-control" <%= user.notifications ? "checked" : "" %> >
-						</div>
-						<br />
+                            <span data-tooltip="tooltip" title="This is an automatically generated field. Other users can use this to find you." class="input-group-addon iga-left" id="nameid-addon">Unique Name</span>
+                            <input type="text" aria-describeby="nameid-addon" placeholder="Unique Name" name="nameId" value="<%= user.nameId %>" class="form-control" disabled>
+                        </div>
+                        <br />
 
-			          	<div class="form-group">
-			        	    <input type="submit" value="Update" class="btn btn-primary" >
-			        	</div>
-			        </form>
-			      </div>
+                        <div class="input-group">
+                            <span data-tooltip="tooltip" title="You can enable notifications to be sent when the website is open." class="input-group-addon iga-left" id="notif-addon">Notifications</span>
+                            <input type="checkbox" aria-describeby="notif-addon" name="notif-checkbox" data-toggle="toggle" data-on="Enabled" data-off="Disabled" class="form-control" <%= user.notifications ? "checked" : "" %> >
+                        </div>
+                        <br />
 
-				  <div class="tab-pane fade" id="password-tab">
-			    	<form action="/profile/update-password" method="post" id="password-form" >
-						<br />
-						<div class="input-group">
-							<span data-tooltip="tooltip" title="Please confirm your current password" class="input-group-addon iga-left" id="old-password-addon">Current Password</span>
+                          <div class="form-group">
+                            <input type="submit" value="Update" class="btn btn-primary" >
+                        </div>
+                    </form>
+                  </div>
 
-							<input aria-describeby="old-password-addon" placeholder="*******" type="password" id="current_password" name="current_password" class="form-control">
+                  <div class="tab-pane fade" id="password-tab">
+                    <form action="/profile/update-password" method="post" id="password-form" >
+                        <br />
+                        <div class="input-group">
+                            <span data-tooltip="tooltip" title="Please confirm your current password" class="input-group-addon iga-left" id="old-password-addon">Current Password</span>
 
-							<span class="input-group-btn">
-								<button onclick="togglePassword(this, 'current_password')" class="btn btn-default" type="button"><span class="glyphicon glyphicon-eye-open"></span></button>
-							</span>
-						</div>
+                            <input aria-describeby="old-password-addon" placeholder="*******" type="password" id="current_password" name="current_password" class="form-control">
 
-						<br />
+                            <span class="input-group-btn">
+                                <button onclick="togglePassword(this, 'current_password')" class="btn btn-default" type="button"><span class="glyphicon glyphicon-eye-open"></span></button>
+                            </span>
+                        </div>
 
-						<div class="input-group">
+                        <br />
 
-							<span data-tooltip="tooltip" title="Please confirm your current password" class="input-group-addon iga-left" id="new-password-addon">New Password</span>
+                        <div class="input-group">
 
-				        	<input aria-describeby="new-password-addon" placeholder="**********" type="password" id="new_password" name="new_password" class="form-control">
+                            <span data-tooltip="tooltip" title="Please confirm your current password" class="input-group-addon iga-left" id="new-password-addon">New Password</span>
 
-							<span class="input-group-btn">
-	        					<button onclick="togglePassword(this, 'new_password')" class="btn btn-default" type="button"><span class="glyphicon glyphicon-eye-open" /></button>
-	      					</span>
-						</div>
-						<span id="new_password_result"></span>
+                            <input aria-describeby="new-password-addon" placeholder="**********" type="password" id="new_password" name="new_password" class="form-control">
 
-						<br/>
+                            <span class="input-group-btn">
+                                <button onclick="togglePassword(this, 'new_password')" class="btn btn-default" type="button"><span class="glyphicon glyphicon-eye-open" /></button>
+                              </span>
+                        </div>
+                        <span id="new_password_result"></span>
 
-			        	<div class="input-group">
-			        	    <input type="submit" value="Update" class="btn btn-primary" >
-			        	</div>
+                        <br/>
 
-			    	</form>
-			      </div>
+                        <div class="input-group">
+                            <input type="submit" value="Update" class="btn btn-primary" >
+                        </div>
 
-				  <div class="tab-pane fade" id="platform-tab">
-					  <!-- Don't need to show a form for platforms.. Just buttons to link/unlink accounts -->
-					  	<div id="steam-panel" class="panel panel-default">
-						  	<div class="panel-heading">
-					  	  		<h3 class="panel-title">Steam</h3>
-							</div>
-							<div class="panel-body">
-								<% if (user.steam && user.steam.id){ %>
-									<p>Steam ID: <%= user.steam.id %></p>
-									<p>Username: <%= user.steam.username %></p>
-									<p><a href="/api/steam/delete" class="btn btn-danger">Unlink Steam</a></p>
-								<% }else{ %>
-									<a href="/connect/steam">
-										<img src="https://steamcommunity-a.akamaihd.net/public/images/signinthroughsteam/sits_01.png" width="180" height="35" border="0">
-									</a>
-								<% } %>
-							</div>
-						</div>
-						<div id="twitch-panel" class="panel panel-default">
-						  	<div class="panel-heading">
-					  	  		<h3 class="panel-title">Twitch</h3>
-							</div>
-							<div class="panel-body">
-								<% if (user.twitch && user.twitch.id){ %>
-									<p>ID: <%= user.twitch.id %></p>
-									<p>Username: <%= user.twitch.username %></p>
-									<p><a href="/api/twitch/delete" class="btn btn-danger">Unlink Twitch</a></p>
-								<% }else{ %>
-									<a href="/connect/twitch">
-										<img src="https://camo.githubusercontent.com/f1266002daa15b9aeeb5ab511afef6aa4faffdb5/687474703a2f2f7474762d6170692e73332e616d617a6f6e6177732e636f6d2f6173736574732f636f6e6e6563745f6c696768742e706e67" alt="Connect Light" style="max-width:100%;">
-									</a>
-								<% } %>
-							</div>
-						</div>
-			      </div>
+                    </form>
+                  </div>
 
-				  <div class="tab-pane fade" id="security-tab">
-			    	<form action="/profile/two-factor" method="post" id="security">
-						<br/>
-						<div class="input-group">
-							<span data-tooltip="tooltip" title="Please confirm your current password" class="input-group-addon iga-left" id="confirm-password-addon">Confirm Password</span>
+                  <div class="tab-pane fade" id="platform-tab">
+                      <!-- Don't need to show a form for platforms.. Just buttons to link/unlink accounts -->
+                          <div id="steam-panel" class="panel panel-default">
+                              <div class="panel-heading">
+                                    <h3 class="panel-title">Steam</h3>
+                            </div>
+                            <div class="panel-body">
+                                <% if (user.steam && user.steam.id){ %>
+                                    <p>Steam ID: <%= user.steam.id %></p>
+                                    <p>Username: <%= user.steam.username %></p>
+                                    <p><a href="/api/steam/delete" class="btn btn-danger">Unlink Steam</a></p>
+                                <% }else{ %>
+                                    <a href="/connect/steam">
+                                        <img src="https://steamcommunity-a.akamaihd.net/public/images/signinthroughsteam/sits_01.png" width="180" height="35" border="0">
+                                    </a>
+                                <% } %>
+                            </div>
+                        </div>
+                        <div id="twitch-panel" class="panel panel-default">
+                              <div class="panel-heading">
+                                    <h3 class="panel-title">Twitch</h3>
+                            </div>
+                            <div class="panel-body">
+                                <% if (user.twitch && user.twitch.id){ %>
+                                    <p>ID: <%= user.twitch.id %></p>
+                                    <p>Username: <%= user.twitch.username %></p>
+                                    <p><a href="/api/twitch/delete" class="btn btn-danger">Unlink Twitch</a></p>
+                                <% }else{ %>
+                                    <a href="/connect/twitch">
+                                        <img src="https://camo.githubusercontent.com/f1266002daa15b9aeeb5ab511afef6aa4faffdb5/687474703a2f2f7474762d6170692e73332e616d617a6f6e6177732e636f6d2f6173736574732f636f6e6e6563745f6c696768742e706e67" alt="Connect Light" style="max-width:100%;">
+                                    </a>
+                                <% } %>
+                            </div>
+                        </div>
+                  </div>
 
-							<input type="password" name="password" aria-describeby="confirm-password-addon" placeholder="********" class="form-control" required>
-						</div>
+                  <div class="tab-pane fade" id="security-tab">
+                    <form action="/profile/two-factor" method="post" id="security">
+                        <br/>
+                        <div class="input-group">
+                            <span data-tooltip="tooltip" title="Please confirm your current password" class="input-group-addon iga-left" id="confirm-password-addon">Confirm Password</span>
 
-						<br/>
-						<div class="input-group">
-							<input type="text" value="Enable two factor authentication" class="form-control" disabled="true">
+                            <input type="password" name="password" aria-describeby="confirm-password-addon" placeholder="********" class="form-control" required>
+                        </div>
 
-							<% if ( typeof user.two_factor != "undefined" && user.two_factor.enabled) { %>
-								<!-- Show a "disable" button -->
-								<span class="input-group-addon">
-									<input type="checkbox" name="enable" checked="true">
-								</span>
-							<% }else{ %>
-								<span class="input-group-addon">
-									<input type="checkbox" name="enable">
-								</span>
-							<% } %>
-						</div>
-						<br/>
+                        <br/>
+                        <div class="input-group">
+                            <input type="text" value="Enable two factor authentication" class="form-control" disabled="true">
 
-						<% if (typeof user.two_factor != "undefined" && user.two_factor.enabled) { %>
-							<div class="input-group">
-								<a href="#" data-toggle="modal" id="qr_continue" data-target="#qr_modal">Show QR</a>
-							</div>
-						<% } %>
+                            <% if ( typeof user.two_factor != "undefined" && user.two_factor.enabled) { %>
+                                <!-- Show a "disable" button -->
+                                <span class="input-group-addon">
+                                    <input type="checkbox" name="enable" checked="true">
+                                </span>
+                            <% }else{ %>
+                                <span class="input-group-addon">
+                                    <input type="checkbox" name="enable">
+                                </span>
+                            <% } %>
+                        </div>
+                        <br/>
 
-						<br/>
+                        <% if (typeof user.two_factor != "undefined" && user.two_factor.enabled) { %>
+                            <div class="input-group">
+                                <a href="#" data-toggle="modal" id="qr_continue" data-target="#qr_modal">Show QR</a>
+                            </div>
+                        <% } %>
 
-						<div class="input-group">
-							<input type="submit" class="btn btn-primary" value="Update">
-						</div>
+                        <br/>
 
-			    	</form>
-			      </div>
-			  </div>
-		  </div>
+                        <div class="input-group">
+                            <input type="submit" class="btn btn-primary" value="Update">
+                        </div>
+
+                    </form>
+                  </div>
+              </div>
+          </div>
         </div>
 
-		<% if (typeof user.two_factor != "undefined" && user.two_factor.enabled) { %>
-			<div id="qr_modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="qrModalLabel" aria-hidden="true">
-				<div class="modal-dialog">
-					<div class="modal-content">
-						<div class="modal-header">
-							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <% if (typeof user.two_factor != "undefined" && user.two_factor.enabled) { %>
+            <div id="qr_modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="qrModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 
-							<h2 class="modal-title" id="qrModalLabel">If you cannot see the QR code above enter the code below into your authenticator app</h2>
-							<p><span id='otp_key'></span></p>
+                            <h2 class="modal-title" id="qrModalLabel">If you cannot see the QR code above enter the code below into your authenticator app</h2>
+                            <p><span id='otp_key'></span></p>
 
-						</div>
-						<div class="modal-body">
+                        </div>
+                        <div class="modal-body">
 
-							<div id='otp_qr' style='width: 100%; height: 100%'></div>
-							<br/>
+                            <div id='otp_qr' style='width: 100%; height: 100%'></div>
+                            <br/>
 
-							<form id="verify-2fa" role="form" method="post" action="/profile/two-factor-verify">
-								<div class="form-group">
-									<label for="token">Enter the 6 didgit code you see</label>
-									<input id="token" name="token" type="text" required>
-									<input type="submit" value="Verify" class="btn btn-primary">
-								</div>
-							</form>
-							<!--<hr class="colorgraph" />-->
-							<!-- <div id="qr_form">
-								<p id="qr_error"></p>
-								<div class="form-group">
-									<input type="password" name="qr_password_confirm" id="qr_password_confirm" class="form-control input-lg" placeholder="Confirm Password">
-								</div>
-								<div class="row">
-									<div class="col-xs-6 col-sm-6 col-md-6">
-										<button id="qr_continue" class="btn btn-lg btn-success btn-block">Continue</button>
-									</div>
-								</div>
-							</div>-->
+                            <form id="verify-2fa" role="form" method="post" action="/profile/two-factor-verify">
+                                <div class="form-group">
+                                    <label for="token">Enter the 6 didgit code you see</label>
+                                    <input id="token" name="token" type="text" required>
+                                    <input type="submit" value="Verify" class="btn btn-primary">
+                                </div>
+                            </form>
+                            <!--<hr class="colorgraph" />-->
+                            <!-- <div id="qr_form">
+                                <p id="qr_error"></p>
+                                <div class="form-group">
+                                    <input type="password" name="qr_password_confirm" id="qr_password_confirm" class="form-control input-lg" placeholder="Confirm Password">
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-6 col-sm-6 col-md-6">
+                                        <button id="qr_continue" class="btn btn-lg btn-success btn-block">Continue</button>
+                                    </div>
+                                </div>
+                            </div>-->
 
 
-						</div>
-					</div>
-				</div>
-			</div>
-		<% } %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <% } %>
 
         <!-- /.container -->
 
         <% include ../../partials/footer %>
 
-		<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-form-validator/2.3.26/jquery.form-validator.min.js"></script>
-		<!-- Custom password-strength js file.. -->
-		<script src="/js/custom/profile.password.js"></script>
-		<script src="/js/custom/profile.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-form-validator/2.3.26/jquery.form-validator.min.js"></script>
+        <!-- Custom password-strength js file.. -->
+        <script src="/js/custom/pages/profile.password.js"></script>
+        <script src="/js/custom/pages/profile.js"></script>
 
-		<script>
+        <script>
             drawImage("<%= user.profileImage %>");
             <% if (typeof user.two_factor != "undefined") { %>
             setUpQr(<%= user.two_factor.enabled %>);
@@ -293,7 +274,7 @@
 
             window.Notif.checkPermission();
 
-		</script>
+        </script>
 
         <!-- /.container -->
     </body>
