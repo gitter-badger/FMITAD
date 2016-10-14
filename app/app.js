@@ -4,7 +4,6 @@ var passport = require("passport");
 var app = express();
 
 require("./setup.js")(app, express, passport);
-
 require("./lib/passportHelper")(passport);
 
 //Defined routes.
