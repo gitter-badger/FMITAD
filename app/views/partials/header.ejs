@@ -67,14 +67,23 @@
 </nav>
 
 <!-- Info feedback to user -->
-<% if (typeof error !== 'undefined'){ %>
-    <p class="alert alert-warning"><%= error %></p>
+<% if (typeof error != 'undefined'){ %>
+    <div class="container alert alert-warning alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <strong>Warning!</strong> <%= error %>
+    </div>
 <% } %>
-<% if (typeof notice !== 'undefined'){ %>
-    <p class="alert alert-info"><%= notice %></p>
+<% if (typeof notice != 'undefined'){ %>
+    <div class="container alert alert-info alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <strong>Heads Up!</strong> <%= notice %>
+    </div>
 <% } %>
-<% if (typeof success !== 'undefined'){ %>
-    <p class="alert alert-success"><%= success %></p>
+<% if (typeof success != 'undefined'){ %>
+    <div class="container alert alert-success alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <strong>Success!</strong> <%= success %>
+    </div>
 <% } %>
 
 <div id="login_m" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
