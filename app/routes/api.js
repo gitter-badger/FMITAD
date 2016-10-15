@@ -93,7 +93,7 @@ router.get("/twitch/delete", function(req, res){
 */
 router.get("/events/all", function(req, res){
 
-    var lastCreated = req.query.lastCreated;
+    var lastCreated = JSON.stringify(req.query.lastCreated);
 
     if (lastCreated){
         console.log("Checking if dates are greater than " + lastCreated);
@@ -147,7 +147,7 @@ router.get("/search-user", function(req, res, next){
     //		- nameId
     // 		- username
     //		- id
-    var q = req.query.q;
+    var q = JSON.stringify(req.query.q);
     if (!q || q == "" || q == " ") {
         console.log("No q");
         return res.send([]);

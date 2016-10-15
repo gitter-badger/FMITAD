@@ -15,16 +15,26 @@ module.exports = function ( app, express, passport ){
     app.set('view engine', 'ejs');
     helper(app);
 
+    if (app.get("env") !== "development"){
+        var helmet = require("helmet");
+
+        app.use(helmet());
+    }
+
     app.use(session({
         store: new MongoStore({
             url: mongoUtil.getSessionUri(),
             touchAfter: 24 * ( 60 * 60) // Only allow one update in 24hrs (unless session is changed)
         }),
+        name: "fmitadSession"
         secret : process.env.SECRET || "5c5b6c82-a57d-4150-aa22-6181c4b122f8",
-        cookie: { maxAge: (60 * 60000) }, //After an hr of inactivity, session will expire
-        resave: false,
-        saveUninitialized: false
-    }));// Set up sessions
+        cookie: {
+            maxAge: (60 * 60000) }, //After an hr of inactivity, session will expire
+            resave: false,
+            saveUninitialized: false,
+            httpOnly: true
+        }
+    ));// Set up sessions
 
     // setting up express
     app.use(express.static(path.join(__dirname, "public"))); // make sure it mounts the folders in /public
