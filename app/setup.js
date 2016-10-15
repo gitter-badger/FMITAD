@@ -26,7 +26,7 @@ module.exports = function ( app, express, passport ){
             url: mongoUtil.getSessionUri(),
             touchAfter: 24 * ( 60 * 60) // Only allow one update in 24hrs (unless session is changed)
         }),
-        name: "fmitadSession"
+        name: "fmitadSession",
         secret : process.env.SECRET || "5c5b6c82-a57d-4150-aa22-6181c4b122f8",
         cookie: {
             maxAge: (60 * 60000) }, //After an hr of inactivity, session will expire
