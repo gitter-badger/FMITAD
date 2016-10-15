@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <% title="Events" %>
+        <% include ../../partials/head %>
+    </head>
+
+    <body>
+
+        <% include ../../partials/header %>
+
+
+        <% if (typeof user.currentEvent != 'undefined'){ %>
+            <div class="container alert alert-warning alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <strong>Warning!</strong> Doing this will remove your <a href="/events/<%= user.currentEvent %>">current event</a>
+            </div>
+        <% } %>
+
+        <!-- Page Content -->
+        <div class="container">
+            <form id="event-form" method="post" class="form-horizontal">
+                <fieldset>
+                    <!-- Form Name -->
+                    <legend>Create Event</legend>
+
+                    <div class="form-group">
+                        <label class="col-md-4 control-label" for="selectbasic">Platform
+                            <span data-toggle="tooltip" title="Select what platform your event is for." data-placement="top" >?</span>
+                        </label>
+                        <div class="col-md-5">
+                            <select id="platform" name="platform" class="form-control">
+                                <option value="steam">Steam</option>
+                                <option value="origin">Origin</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-4 control-label" for="selectbasic">Type
+                            <span data-toggle="tooltip" title="Control who can request to join your event." data-placement="top" >?</span>
+                        </label>
+                        <div class="col-md-4">
+                            <select id="eventType" name="eventType" class="form-control">
+                                <option value="3">Anyone</option>
+                                <option value="2">Followers (and subscribers)</option>
+                                <option value="1">Subscribers only</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-4 control-label" for="textinput">Title
+                            <span data-toggle="tooltip" title="Give your event a unique title. Max 50 characters" data-placement="top" >?</span>
+                        </label>
+                        <div class="col-md-4">
+                            <input id="title" name="title" type="text" maxlength="50" placeholder="Title" class="form-control input-md" required="true">
+                        </div>
+                    </div>
+
+                    <!-- Textarea -->
+                    <div class="form-group">
+                        <label class="col-md-4 control-label" for="textarea">Description
+                            <span data-toggle="tooltip" title="Tell the people what this event is!" data-placement="top" >?</span>
+                        </label>
+
+                        <div class="col-md-4">
+                            <textarea class="form-control" id="description" name="description" required="true"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-4 control-label" for="button1id"></label>
+                        <div class="col-md-8">
+                            <button type="submit" class="btn btn-success">Create</button>
+                            <a href="/events" id="button2id" name="button2id" class="btn btn-danger">Cancel</a>
+                        </div>
+                    </div>
+
+                </fieldset>
+            </form>
+
+        </div>
+        <!-- /.container -->
+
+        <% include ../../partials/footer %>
+
+        <script src="/js/custom/pages/events.js"></script>
+        <!-- /.container -->
+    </body>
+</html>

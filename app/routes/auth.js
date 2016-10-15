@@ -52,7 +52,6 @@ router.get("/signup", isLoggedIn, function(req, res){
 // Show the login form for the user to fill out
 // Actual logic is in the POST handler
 router.get("/login", isLoggedIn, function(req, res){
-    console.log("Login locals: " + JSON.stringify(res.locals));
     res.render("pages/auth/login");
 });
 
@@ -93,8 +92,6 @@ router.post("/session/two-factor", function(req, res, next){
     var token = req.body.token;
     var key = crypto.decryptData(req.session.password + req.session.temp.user.salt, req.session.temp.key, req.session.temp.user.crypto.cipher );
 
-    console.log("Temp: "+ key);
-
     var auth = authenticator.verifyToken(key, token);
 
     if(auth){
@@ -131,7 +128,7 @@ router.post("/session/two-factor", function(req, res, next){
     If they don't we log them in :)
 */
 router.post("/login", isLoggedIn, function(req, res){
-    var _email = req.body.email;
+    var _email = JSON.stringify(req.body.email); // Stop mongodb injection... Hopefully
     var _password = req.body.password;
     mongo.getModel("User").findOne( {email: _email}, function(err, doc){
         if (err){
@@ -190,32 +187,6 @@ router.post("/login", isLoggedIn, function(req, res){
         }
 
     });
-
-});
-
-router.get("/email/:type", function(req, res){
-    var fs = require("fs");
-    var util = require("util");
-    var path = require("path");
-
-    console.log(JSON.stringify(req.user));
-    var user = req.user;
-
-    var confirmHtml = fs.readFileSync(path.join(__dirname, "../", "../", "email", req.params.type ), {encoding: "utf8"});
-    var formattedHtml = util.format(confirmHtml);
-    //console.log(formattedHtml);
-
-    transport.sendMail({
-        html: formattedHtml,
-        to: user.email,
-        from: '"Support FMITAD" <support@fmitad.com>',
-        subject: "Test email - FMITAD"
-    }, function(err){
-        if(err)
-            console.log("Error sending message: " +err);
-    });
-
-    res.send("Done!");
 
 });
 
@@ -295,8 +266,8 @@ router.post("/signup", [isLoggedIn, upload.single("image")], function(req, resul
 });
 
 router.post("/profile/update-basic", upload.single("image"), function(req, res){
-    var uname = req.body.username;
-    var email = req.body.email;
+    var uname = escape(req.body.username); // I don't trust their input
+    var email = escape(req.body.email);
 
     var _image = req.file;
     var notifs = req.body["notif-checkbox"];
@@ -362,9 +333,9 @@ router.post("/profile/update-basic", upload.single("image"), function(req, res){
 */
 function signUp( data, file, next ){
     //They aren't a robot.... I hope... If they are the we have reached the singularity (or we have a smart bot on our hands) :O
-    var _username = data.username;
-    var _email = data.email;
-    var _password = data.password;
+    var _username = escape(JSON.stringify(data.username));
+    var _email = escape(JSON.stringify(data.email));
+    var _password = JSON.stringify(data.password);
     var _image = file;
     var _id = uuid();
 
@@ -425,5 +396,18 @@ function signUp( data, file, next ){
         }
     });
 };
+
+function escape(text) {
+  var map = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;'
+  };
+
+  return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+}
+
 
 module.exports = router;

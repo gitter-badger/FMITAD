@@ -18,10 +18,6 @@ $(document).ready(function(){
 
     var id = window.location.hash.substr(1);
     $("#" +id).tab("show");
-
-
-
-
 });
 
 function setUpQr( authEnabled ){

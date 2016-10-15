@@ -9,6 +9,12 @@ $(document).ready(function(){
         }
     });
 
+    $("#event-add-more").click(function(){
+        loadMoreEvents();
+    });
+
+    $('[data-toggle="tooltip"]').tooltip()
+
     loadMoreEvents();
 });
 
@@ -46,11 +52,13 @@ function getHtml( data ){
             + '<div class="panel-heading">'
             +	'<a href="/events/%(id)s" ><h3 class="panel-title">%(details.title)s</h3></a></div>'
             + '<div class="panel-body">'
-                + '<p>ID: %(id)s </p>'
-                + '<p>Owner: %(owner)s </p>'
-                + '<p>Platform: %(platform)s </p>'
-                + '<p>Type: %(type)s </p>'
-                + '<p>created_at: %(created_at)s </p>'
+                + "<p><b>Description:</b> %(details.description)s</p>"
+                // + '<p>ID: %(id)s </p>'
+                // + '<p>Owner: %(owner)s </p>'
+                 + '<p><b>Platform:</b> %(platform)s </p>'
+                // + '<p>Type: %(type)s </p>'
+                // + '<p>created_at: %(created_at)s </p>'
+
             +'</div></div></div>';
 
     return sprintf(html, data)
