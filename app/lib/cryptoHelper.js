@@ -85,45 +85,6 @@ Helper.implementNewAlgos = function(plainpass, userObj){
     });
 };
 
-/*
-    Encrypts the user's salt with their plaintext password.
-
-    I was going to use this to add extra security to the user's account by encrypting their salt.
-    E.g.
-        When user signs up
-            - Generate salt
-            - Encrypt salt with password
-            - Store encrypted salt in DB
-*/
-Helper.encryptSalt = function(password, salt, cipherAlgo){
-    var cipher = crypto.createCipher(cipherAlgo, password);
-
-    var r = cipher.update(salt, "utf8", "hex");
-    r += cipher.final("hex");
-
-    return r;
-};
-
-/*
-    Decrypts the user's salt with their plaintext password.
-
-    I was going to use this to add extra security to the user's account
-    E.g.
-        When user logs
-            - Get encrypted salt
-            - Decrypt the salt using the password supplied
-            - Check the plaintext password against the stored password
-                - Hash the supplied password with the decrypted salt
-*/
-Helper.decryptSalt = function(password, ciphertext, cipherAlgo){
-    var cipher = crypto.createDecipher(cipherAlgo, password);
-
-    var r = cipher.update(ciphertext, "hex",  "utf8");
-    r += cipher.final("utf8");
-
-    return r;
-};
-
 // Hashes the password with the supplied salt then hashed password as a hex string.
 Helper.hashPassword = function(salt, password, hashAlgo){
     var hash = crypto.createHash(hashAlgo);
