@@ -128,7 +128,7 @@ router.post("/session/two-factor", function(req, res, next){
     If they don't we log them in :)
 */
 router.post("/login", isLoggedIn, function(req, res){
-    var _email = JSON.stringify(req.body.email); // Stop mongodb injection... Hopefully
+    var _email = req.body.email;
     var _password = req.body.password;
     mongo.getModel("User").findOne( {email: _email}, function(err, doc){
         if (err){
@@ -333,9 +333,9 @@ router.post("/profile/update-basic", upload.single("image"), function(req, res){
 */
 function signUp( data, file, next ){
     //They aren't a robot.... I hope... If they are the we have reached the singularity (or we have a smart bot on our hands) :O
-    var _username = escape(JSON.stringify(data.username));
-    var _email = escape(JSON.stringify(data.email));
-    var _password = JSON.stringify(data.password);
+    var _username = escape(data.username);
+    var _email = escape(data.email);
+    var _password = data.password;
     var _image = file;
     var _id = uuid();
 

@@ -78,7 +78,7 @@ router.get("/confirm/:token", function(req, res){
     var mongo = require("../lib/mongo");
     var m = mongo.getModel("User");
 
-    m.findOne({email_token: JSON.stringiy(req.params.token) }, function(err, doc){
+    m.findOne({email_token: req.params.token }, function(err, doc){
         if (err){
             req.session.error = err;
             return res.redirect("/");
@@ -121,7 +121,7 @@ router.get("/following", function(req, res){
 });
 
 router.get("/user/:id/follow", function(req, res){
-    var id = JSON.stringiy(req.params.id);
+    var id = req.params.id;
     if (id == req.user.id){
         return res.redirect("/users");
     }

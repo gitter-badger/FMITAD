@@ -93,7 +93,7 @@ router.get("/twitch/delete", function(req, res){
 */
 router.get("/events/all", function(req, res){
 
-    var lastCreated = JSON.stringify(req.query.lastCreated);
+    var lastCreated = req.query.lastCreated;
 
     if (lastCreated){
         console.log("Checking if dates are greater than " + lastCreated);
