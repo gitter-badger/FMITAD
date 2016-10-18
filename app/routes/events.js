@@ -34,17 +34,17 @@ router.post("/create", ensureAuth, function(req, res){
     type = (type < 4 && type > 0) ? type : 2;// Make sure it's our values.
     // If it's not. Set it to the default value.
 
-    var eventModel = mongo.getModel("Event");
+    var eventSchema = mongo.getModel("Event");
 
     //Delete any old events
     if (req.user.currentEvent){
-        eventModel.findOneAndRemove({id: req.user.currentEvent}, function(err, deletedEvent){
+        eventSchema.findOneAndRemove({id: req.user.currentEvent}, function(err, deletedEvent){
             if(err){
                 req.session.error = "Couldn't delete old event: " + err;
                 return res.redirect("/events/create");
             }
 
-            var e = createEvent(eventModel, owner, platform.toLowerCase(), type, title, description);
+            var e = createEvent(eventSchema, owner, platform.toLowerCase(), type, title, description);
 
             e.save(function(err){
                 if (err){
@@ -55,11 +55,11 @@ router.post("/create", ensureAuth, function(req, res){
                 req.user.currentEvent = e.id;
                 req.user.save(function(_err_){});
 
-                res.redirect("/events/" + e.id);
+                res.redirect("/events/");
             });
         });
     }else{
-        var e = createEvent(eventModel, owner, platform.toLowerCase(), type, title, description);
+        var e = createEvent(eventSchema, owner, platform.toLowerCase(), type, title, description);
 
         e.save(function(err){
             if (err){
@@ -70,16 +70,16 @@ router.post("/create", ensureAuth, function(req, res){
             req.user.currentEvent = e.id;
             req.user.save(function(_err_){});
 
-            res.redirect("/events/" + e.id);
+            res.redirect("/events");
         });
     }
 
 });
 
 
-function createEvent( eventModel, owner, platform, type, title, description ){
-    return new eventModel({
-        id: eventModel.generateId(),
+function createEvent( eventSchema, owner, platform, type, title, description ){
+    return new eventSchema({
+        id: eventSchema.generateId(),
         owner: owner,
         platform: platform,
         type: type,
@@ -103,11 +103,6 @@ function escape(text) {
   return text.replace(/[&<>"']/g, function(m) { return map[m]; });
 }
 
-
-router.get("/:id", function(req, res){
-    req.session.error = "Sorry, that's not implemented yet :'(";
-    res.redirect("/events");
-});
 
 
 module.exports = router;
