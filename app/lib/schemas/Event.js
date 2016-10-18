@@ -40,24 +40,13 @@ Event.statics.generateId = function(){
 };
 
 Event.methods.getOwner = function( cb ){
-    this.model("User").findOne({id: this.owner}, "id username nameId twitch", function(err, doc){
+    this.model("User").findOne({id: this.owner}, "id username nameId", function(err, doc){
         if (err)
             return cb(err);
 
         if (!doc){
             return cb("No owner found with id '" + this.owner + "'");
         }
-
-        /*var o = {
-            id: doc.id,
-            username: doc.username,
-            nameId: doc.nameId,
-
-            twitch: {
-                // Used to check if User is Following/Subscribed to Owner
-                username: doc.twitch.username
-            }
-        }*/
 
         return cb( null, doc.toObject() );
     });

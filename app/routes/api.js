@@ -96,8 +96,8 @@ router.get("/events/all", function(req, res){
     var lastCreated = req.query.lastCreated;
 
     if (lastCreated){
-        console.log("Checking if dates are greater than " + lastCreated);
-        mongo.getModel("Event").find({ created_at: { $gt: lastCreated } }, "id owner platform type details created_at", {
+        //console.log("Checking if dates are greater than " + lastCreated);
+        mongo.getModel("Event").find({ created_at: { $gt: lastCreated } }, "id platform details created_at", {
             limit: 9,
             sort:
                 {
@@ -114,7 +114,7 @@ router.get("/events/all", function(req, res){
         });
     }else{
 
-        mongo.getModel("Event").find({ }, "id owner platform type details created_at", {
+        mongo.getModel("Event").find({ }, "id platform details created_at", {
             limit: 9,
             sort:
                 {
@@ -129,10 +129,39 @@ router.get("/events/all", function(req, res){
 
             res.send(data);
         });
-
     }
+});
 
+router.get("/event/:id", function(req, res){
+    var id = req.params.id;
 
+    mongo.getModel("Event").findOne( { id: id }, function(err, doc){
+        if (err){
+            req.session.error = "Couldn't get event: " + err;
+            return res.redirect("/events");
+        }
+
+        if (doc){
+            var obj = doc.toObject();
+
+            doc.getOwner(function( err, owner ){
+                if (owner){
+                    obj.owner = owner;
+                    res.send(obj);
+                }else{
+                    obj.owner = { "username" : "None" };
+                    res.send(obj);
+                }
+            });
+
+            //res.send( obj );
+        }else{
+            res.send({
+                error: "No event with the ID (" + id + ") found"
+            });
+        }
+
+    });
 });
 
 
