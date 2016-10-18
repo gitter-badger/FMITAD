@@ -15,18 +15,18 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 
-			<!-- Main bit of nav bar (shown to all) -->
-			<ul class="nav navbar-nav">
-				<li>
-					<a href="/about">About</a>
-				</li>
-				<li>
-					<a href="#">Events</a>
-				</li>
-			</ul>
+            <!-- Main bit of nav bar (shown to all) -->
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="/about">About</a>
+                </li>
+                <li>
+                    <a href="/events">Events</a>
+                </li>
+            </ul>
 
-			<!-- User specific navbar -->
-			<% if (typeof user == 'undefined') { %>
+            <!-- User specific navbar -->
+            <% if (typeof user == 'undefined') { %>
                 <ul class="nav navbar-nav navbar-right">
                     <!-- Not logged in! -->
                     <li>
@@ -39,32 +39,52 @@
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><%= user.username %> <span class="caret"></span></a>
                         <ul class="dropdown-menu">
-							<li><a href="/profile">Profile</a></li>
-							
-							<li role="separator" class="divider"></li>
+                            <li><a href="/profile">Profile</a></li>
 
-							<!-- This long link sends the user to Github and starts to create a new issue, giving them a template to work off (if they choose) -->
+                            <li role="separator" class="divider"></li>
+
+                            <!-- This long link sends the user to Github and starts to create a new issue, giving them a template to work off (if they choose) -->
                             <li><a href="https://github.com/TGRHavoc/FMITAD/issues/new?title=Issue+from+<%= user.username %>&body=Id:+<%= user.id %>%0AComment:+Please+enter+your+issue+here">Feedback/Bug report</a></li>
                             <li><a href="#">Support</a></li>
                             <li role="separator" class="divider"></li>
                             <li><a href="/logout">Log out</a></li>
                         </ul>
                     </li>
-					<% if (user.isAdmin) { %>
-						<!-- Display Admin-Only content here (e.g. /admin ?) -->
-					<% } %>
-					<% if (user.isAdmin || user.isMod) { %>
-						<!-- Display moderator content here -->
-					<% } %>
+                    <% if (user.isAdmin) { %>
+                        <!-- Display Admin-Only content here (e.g. /admin ?) -->
+                    <% } %>
+                    <% if (user.isAdmin || user.isMod) { %>
+                        <!-- Display moderator content here -->
+                    <% } %>
                 </ul>
             <% } %>
-			<!-- End of User specific navbar -->
+            <!-- End of User specific navbar -->
 
         </div>
         <!-- /.navbar-collapse -->
     </div>
     <!-- /.container -->
 </nav>
+
+<!-- Info feedback to user -->
+<% if (typeof error != 'undefined'){ %>
+    <div class="container alert alert-warning alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <strong>Warning!</strong> <%= error %>
+    </div>
+<% } %>
+<% if (typeof notice != 'undefined'){ %>
+    <div class="container alert alert-info alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <strong>Heads Up!</strong> <%= notice %>
+    </div>
+<% } %>
+<% if (typeof success != 'undefined'){ %>
+    <div class="container alert alert-success alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <strong>Success!</strong> <%= success %>
+    </div>
+<% } %>
 
 <div id="login_m" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
     <div class="modal-dialog">

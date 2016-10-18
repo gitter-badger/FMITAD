@@ -10,40 +10,30 @@
 
         <!-- Page Content -->
         <div class="container">
-			<% if (typeof error != 'undefined'){ %>
-				<p class="alert alert-warning"><%= error %></p>
-			<% } %>
-			<% if (typeof notice != 'undefined'){ %>
-				<p class="alert alert-info"><%= notice %></p>
-			<% } %>
-			<% if (typeof success != 'undefined'){ %>
-				<p class="alert alert-success"><%= success %></p>
-			<% } %>
+            <div id="otp_qr" style="width:100px; height:100px; margin:65px;"></div>
 
-			<div id="otp_qr" style="width:100px; height:100px; margin:65px;"></div>
+            <h4>If you cannot use the QR code, enter the key below</h4>
+            <p><%= key %></p>
 
-			<h4>If you cannot use the QR code, enter the key below</h4>
-			<p><%= key %></p>
-
-			<form id="verify-2fa" role="form" method="post" action="">
-				<div class="form-group">
-					<input id="token" name="token" type="text" required>
-					<input type="submit" value="Verify" class="btn btn-primary btn-block btn-lg">
-				</div>
-			</form>
+            <form id="verify-2fa" role="form" method="post" action="">
+                <div class="form-group">
+                    <input id="token" name="token" type="text" required>
+                    <input type="submit" value="Verify" class="btn btn-primary btn-block btn-lg">
+                </div>
+            </form>
 
         </div>
         <!-- /.container -->
 
         <% include ../../partials/footer %>
         <!-- /.container -->
-		<script>
-			var qrCode = new QRCode(document.getElementById("otp_qr"),{
-				text: "<%= otp_uri %>",
-				width: 128,
-				height: 128
-			});
-		</script>
+        <script>
+            var qrCode = new QRCode(document.getElementById("otp_qr"),{
+                text: "<%= otp_uri %>",
+                width: 128,
+                height: 128
+            });
+        </script>
 
     </body>
 </html>

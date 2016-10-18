@@ -11,8 +11,14 @@
     </footer>
 </div>
 
+<script src="/socket.io/socket.io.js"></script>
 <script src="/js/bootstrap.js"></script>
 <script src="/js/respond.js"></script>
 <script src="/js/holder.js"></script>
 <!-- https://github.com/alexei/sprintf.js for usage -->
 <script src="/js/sprintf.min.js"></script>
+
+<script src="/js/custom/sockets/main.js"></script>
+<script src="/js/custom/notifications/notifications.js"></script>
+<!-- If the user is logged in, use their preferences otherwise, just assume they don't want them -->
+<script> window.Notif.setPreference( <%= (typeof user !== "undefined") ? user.notifications : false %> ); </script>

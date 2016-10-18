@@ -12,37 +12,29 @@
 
         <!-- Page Content -->
         <div class="container">
-            <% if (typeof error != 'undefined'){ %>
-                <p class="alert alert-warning"><%= error %></p>
-            <% } %>
-            <% if (typeof notice != 'undefined'){ %>
-                <p class="alert alert-info"><%= notice %></p>
-            <% } %>
-            <% if (typeof success != 'undefined'){ %>
-                <p class="alert alert-success"><%= success %></p>
-            <% } %>
+
 
             <div class="row">
                 <div class="col-xs-12 col-sm-8 col-md-6 col-sm-offset-2 col-md-offset-3">
                     <form id="register_form" role="form" method="post" enctype="multipart/form-data" action="">
                         <h2>Please Sign Up <small>It's free and always will be.</small></h2>
                         <hr class="colorgraph">
-						<div class="form-group">
-							<!--<div class="col-xs-6 col-md-3">-->
-								<div class="thumbnail">
-									<canvas style="border:1px solid grey;" id="image_canvas" width="100" height="100"></canvas>
+                        <div class="form-group">
+                            <!--<div class="col-xs-6 col-md-3">-->
+                                <div class="thumbnail">
+                                    <canvas style="border:1px solid grey;" id="image_canvas" width="100" height="100"></canvas>
 
-									<input id="selectedImage" placeholder="Choose File" disabled="disabled" />
-									<div class="btn" style="clear: both;">
-									    <input name="image" id="image" type="file" accept="image/*" class="upload" />
-									</div>
-									<input type="text" name="image_old" id="base64Image" hidden />
+                                    <input id="selectedImage" placeholder="Choose File" disabled="disabled" />
+                                    <div class="btn" style="clear: both;">
+                                        <input name="image" id="image" type="file" accept="image/*" class="upload" />
+                                    </div>
+                                    <input type="text" name="image_old" id="base64Image" hidden />
 
-								</div>
-				      			<!--<img  height="200px" class="media-object" id="pastedImage"/>-->
-						  	<!--</div>-->
+                                </div>
+                                  <!--<img  height="200px" class="media-object" id="pastedImage"/>-->
+                              <!--</div>-->
 
-						</div>
+                        </div>
                         <div class="form-group">
                             <input data-validation="length" data-validation-length="min5" data-validation-error-msg="Your display name must be more than 5 characters" type="text" name="username" id="username" class="form-control input-lg" placeholder="Display Name" tabindex="3" required>
                         </div>
@@ -108,6 +100,6 @@
         <% include ../../partials/footer %>
         <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-form-validator/2.3.26/jquery.form-validator.min.js"></script>
 
-        <script src="/js/custom/signup.js"> </script>
+        <script src="/js/custom/pages/signup.js"> </script>
     </body>
 </html>
