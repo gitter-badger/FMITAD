@@ -13,6 +13,25 @@ $(document).ready(function(){
         loadMoreEvents();
     });
 
+    $("#joinEventBtn").click(function(){
+        $.post("/api/event/" + $(this).attr("data-id") + "/join", function(data, status){
+
+            if (status != "success"){
+                console.log("Status wasn't success, it was " + status);
+                return;
+            }
+
+            if (data.error){
+                $("#placeholder1").html('<div class="alert alert-danger"><a class="close" data-dismiss="alert">×</a><span>' + data.error + '</span></div>');
+            }else if(data.success){
+                $("#placeholder1").html('<div class="alert alert-success"><a class="close" data-dismiss="alert">×</a><span> '+ data.success + '</span></div>');
+            }
+
+            $('#eventModal').modal("hide");
+
+        });
+    });
+
     $('[data-toggle="tooltip"]').tooltip();
 
     loadMoreEvents();
@@ -42,6 +61,7 @@ function eventClick (e){
 
         $(me.attr("href") + " h4.modal-title").html(data.details.title);
         $(me.attr("href") + " div.modal-body").html( genModalBodyHtml(data) );
+        $(me.attr("href") + " button#joinEventBtn").attr("data-id", data.id);
 
         $(me.attr("href")).modal("show");
     });
@@ -84,7 +104,6 @@ function genModalBodyHtml( data ){
                 + '<p>%(platform)s</p>'
                 + '<br/><b>Created by:</b>'
                 + '<p>%(owner.username)s</p>';
-
 
     return sprintf(html, data);
 }
