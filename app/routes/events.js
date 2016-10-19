@@ -23,6 +23,15 @@ router.get("/create", ensureAuth, function(req, res){
     res.render("pages/events/create", {info: notice} );
 });
 
+router.get("/manage", function(req, res){
+    if (!req.user.currentEvent){
+        req.session.info = "You do not have an event to manage";
+        return res.redirect("/events");
+    }
+
+    res.send("I'm alive. Just not implemented yet.");
+});
+
 router.post("/create", ensureAuth, function(req, res){
 
     var platform = escape(req.body.platform);

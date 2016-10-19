@@ -164,6 +164,40 @@ router.get("/event/:id", function(req, res){
     });
 });
 
+router.post("/event/:id/join", function(req, res){
+    mongo.getModel("Event").findOne( { id: req.params.id }, function(err, doc){
+        if (err || !(doc) ){
+            return res.send({
+                error: err ? err : "No event found"
+            });
+        }
+
+        var alreadyJoined = doc.joinQueue.some(function(id){
+            return id === req.user.id;
+        });
+
+        if (alreadyJoined){
+            return res.send({error: "You've already requested to join this event"});
+        }
+
+        //Otherwise
+        doc.joinQueue.push(req.user.id);
+        doc.save(function(_err){
+            if (_err){
+                return res.send ({
+                    error: _err
+                });
+            }
+            
+            res.send({
+                success: "Successfully requested to join"
+            });
+
+        });
+
+    });
+});
+
 
 /*
     API to search for users who have an ID, Username or nameId value supplied.

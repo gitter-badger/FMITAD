@@ -26,6 +26,8 @@ var Event = new Schema({
     */
     type: {type: Number, default: 2},
 
+    joinQueue: [String],
+
     details: {
         title: String,
         description: String
